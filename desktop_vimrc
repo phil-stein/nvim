@@ -1,0 +1,333 @@
+" Vim with all enhancements
+source $VIMRUNTIME/vimrc_example.vim
+
+" Use the internal diff if available.
+" Otherwise use the special 'diffexpr' for Windows.
+
+" set t_Co=16       " use standard terminal 16 colors
+set t_Co=256        " allows usage of 256 colors
+set termguicolors   " use true colors / use gui, guifg, guibg instead of cterm
+set encoding=utf-8  " instead of default ascii
+set term=win32
+set t_ut=""         " clear option 'background color erase', https://github.com/microsoft/terminal/issues/832
+
+" Plugins will be downloaded under the specified directory.
+call plug#begin('~/.vim/plugged')
+  
+  Plug 'tpope/vim-sensible'		            " basic starter setup
+  " code:
+" Plug 'dense-analysis/ale'		            " syntax highlighting for lots of languages
+" Plug 'tpope/vim-commentary'             " commenting lines with 'gcc'
+" Plug 'pulkomandy/c.vim'                 " improves c syntax highlighting
+" Plug 'neoclide/coc.nvim', {'branch': 'release'} " autocompletion
+" Plug 'OmniSharp/omnisharp-vim'	        " c# error&syntax highlighting, compilation
+  " quality of life:
+" Plug 'mhinz/vim-startify'               " starting page  
+  Plug 'preservim/nerdtree'		            " file-explorer inside vim
+  Plug 'vim-airline/vim-airline'	        " the nice looking bar at the bottom
+  Plug 'enricobacis/vim-airline-clock'    " clock in airline
+  Plug 'vimwiki/vimwiki'                  " markdown like sytax
+  " syntax highlighting:
+  Plug 'tikhomirov/vim-glsl' 	    	      " syntax highlighting for glsl 
+" Plug 'hallzy/gravity.vim'		            " syntax highlighting for gravity
+" Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' } " color in hex
+  " colorscheme: 
+  Plug 'vim-airline/vim-airline-themes'	  " themes for airline
+" Plug 'morhetz/gruvbox'		              " color scheme
+" Plug 'junegunn/seoul256.vim'		        " 256 colors in vim (8bit colors)
+  Plug 'rakr/vim-one'		                  " dark/blue/purple -ish colorscheme  
+  Plug 'ryanoasis/vim-devicons'           " icons for plugins
+  
+call plug#end()
+
+" keybindings----------------------------------------------------------------------------
+let mapleader = " "   " leader -> spacebar
+" in normal-mode => space: resizes width of act window
+nnoremap - :vertical resize +10<CR>
+nnoremap _ :vertical resize -10<CR>
+nnoremap , :resize +4<CR>
+nnoremap ; :resize -4<CR>
+
+" switch window, up / down dont work, "tnoremap" for terminals
+nnoremap <silent> <C-LEFT>  <C-w>h
+nnoremap <silent> <C-DOWN>  <C-w>j
+nnoremap <silent> <C-UP>    <C-w>k
+nnoremap <silent> <C-RIGHT> <C-w>l
+tnoremap <silent> <C-LEFT>  <C-w>h
+tnoremap <silent> <C-DOWN>  <C-w>j
+tnoremap <silent> <C-UP>    <C-w>k
+tnoremap <silent> <C-RIGHT> <C-w>l
+
+" open & close term/window, "tnoremap" for terminals
+nnoremap <silent> <C-w>+  :vert term<CR>
+tnoremap <silent> <C-w>+  :vert term<CR>
+nnoremap <silent> <C-w>*  :term<CR>
+tnoremap <silent> <C-w>*  :term<CR>
+nnoremap <silent> <C-w>-       :q!<CR>
+tnoremap <silent> <C-w>-  <C-w>:q!<CR>
+
+" buffer navigation, "tnoremap" for terminals
+nnoremap <silent>  <leader><tab>  :bnext<CR>    " next buffer
+nnoremap <silent>  <leader><bs>   :bdelete<CR>  " unload buffer
+" hide highlights, search garbage to 'clear' the search
+nnoremap <silent> <leader><  :nohlsearch<CR>:/kdjfjndvjndkjndkjnvkjndvnifhnei<CR> 
+
+" folding 
+set foldenable
+set foldmethod=syntax " indent 
+set foldlevelstart=99 " start editing with all folds open
+nnoremap <silent> <leader>+ zo       " open fold
+nnoremap <silent> <leader>- zc       " close fold
+nnoremap <silent> <leader><CR> za    " toggle fold
+
+" gvim toggle fullscreen https://github.com/movsb/gvim_fullscreen
+noremap <leader><f11>  has("gui_running") ? :echo test<CR> :call libcallnr('gvim_fullscreen.dll', 'ToggleFullscreen', 0)<CR> :
+autocmd vimenter * if has("gui_running") | call libcallnr('gvim_fullscreen.dll', 'ToggleFullscreen', 0) | endif
+
+"----------------------------------------------------------------------------------------
+
+" styling--------------------------------------------------------------------------------
+" hi clear
+" syntax reset
+set background=dark
+let g:one_allow_italics=1 
+colorscheme one
+" let g:seoul256_background = 234 " 233 -> 239, dark -> light
+" colorscheme seoul256
+" hi normal guibg=#3F3F3F
+filetype plugin on
+syntax on
+
+" set guifont= Mono\ Dejavu\ Sans\ 12 " the font(s) used in gvim
+set guifont=JetBrains\ Mono\ NL\ Regular\ Nerd\ Font\ Complete\ Mono\ Windows\ Compatible\:h10,Cascadia\ Code\:h10,Consolas\:h10
+hi cursor ctermbg=white guibg=white
+set number
+set cursorline
+set cursorlineopt=number,screenline
+hi cursorline ctermbg=NONE guibg=NONE ctermfg=NONE guifg=NONE cterm=NONE gui=NONE 
+hi cursorline cterm=underline gui=underline
+" @TODO: match whitespace and dont underline in cursorline, or re-color
+" syn match cursorlnespace "/\s\+"
+" syn keyword txt red NONE term cterm gui
+" hi txt cterm=NONE gui=NONE ctermbg=red guibg=red
+" hi cursorline ctermbg=darkgrey guibg=#4B4B4B ctermfg=NONE guifg=NONE cterm=NONE gui=NONE
+hi comment cterm=italic gui=italic 
+
+syn match note_decl contained "@NOTE:"
+syn match note_decl contained "@TODO:"
+syn match note_decl contained "@UNCLEAR:"
+syn match note_decl contained "@BUGG:"
+syn match note_decl contained "@CLEANUP:" 
+syn match note_decl contained "@OPTIMIZATION:" 
+syn match note_decl contained "@REFACTOR:" 
+syn match note_decl contained "@SPEED:" 
+hi def link notes Todo
+
+set shiftwidth=2  " tab width
+set tabstop=2
+set expandtab     " tabs are spaces
+
+hi matchparen ctermfg=11 ctermbg=16 guifg=cyan guibg=#282c34 cterm=NONE gui=NONE
+hi incsearch  ctermbg=176 ctermfg=16 guibg=cyan guifg=#282c34    cterm=NONE,standout gui=NONE,standout 
+hi search     ctermbg=176 ctermfg=16 guibg=#c678dd guifg=#282c34 cterm=NONE,standout gui=NONE,standout
+
+" allows switching off file without saving changes
+" there still stored in the buffer, but not in the actual file
+" set hidden
+
+" set ruler       " show the cursor position all the time    
+set showcmd     " display incomplete commands             
+set wildmenu    " display completion matches in a status line
+" max dist till top / bottom of screen with cursor
+set scrolloff=8
+
+" !!! -- needed for coc -- !!!
+" set encoding=utf-8 also required, see above
+" merge line number and error-sign column
+set signcolumn=number
+" default if 4000ms, more responsive this way
+set updatetime=2000
+" !!! -------------------- !!!
+" !!! ------vim-wiki------ !!!
+set nocompatible
+filetype plugin on
+" !!! -------------------- !!!
+" sets the line-number column size
+" set nuw=4
+
+" gvim remove toolbar, scrollbar, menubar [https://vimhelp.org/options.txt.html#%27guioptions%27]
+set guioptions-=T
+set guioptions-=r
+set guioptions-=L
+set guioptions-=m
+
+" refresh devicons, useful after :so %
+" one above :h devicons-why-do-i-have-artifacts-after-of-icons
+" vim if exists("g:loaded_webdevicons") call webdevicons#refresh() endif
+"---------------------------------------------------------------------------------------
+
+" vim -----------------------------------------------------------------------------------
+" let g:zip_zipcmd = "unzip -u "
+"---------------------------------------------------------------------------------------
+
+" NERDTree ------------------------------------------------------------------------------
+" NERDTreee Wiki - https://github.com/preservim/nerdtree/wiki/F.A.Q.
+
+" If more than one window and previous buffer was NERDTree, go back to it.
+autocmd BufEnter * if bufname('#') =~# "^NERD_tree_" && winnr('$') > 1 | b# | endif
+" avoid crahses when using plug
+let g:plug_window = 'noautocmd vertical topleft new'
+" auto-open NERDTree
+" autocmd vimenter * NERDTree " disabled for startify
+" auto-open NERDTree on opening dirs
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 &&  isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif 
+
+" open NERDTree using 'Ctrl-D'
+map <C-d> :NERDTreeToggle<CR>
+
+" close NERDTree window if there only is a NERDTree window
+autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+ 
+" show hidden files
+let NERDTreeShowHidden=0
+
+" devicons icon
+let g:webdevicons_enable_nerdtree=1
+let g:webdevicons_conceal_nerdtree_brackets=1
+"----------------------------------------------------------------------------------------
+
+"airline --------------------------------------------------------------------------------
+" themes: https://github.com/vim-airline/vim-airline/wiki/Screenshots
+" let g:airline_theme='bubblegum' 
+" let g:airline_theme='deus' 
+let g:airline_theme='hybrid' 
+" let g:airline_theme='onedark' 
+" let g:airline#extensions#ale#enabled = 1
+let g:airline#extensions#nerdtree_statusline = 1
+let g:airline#extensions#tabline#enabled = 1
+  let g:airline#extensions#tabline#show_buffers = 0
+  let g:airline#extensions#tabline#show_splits = 0
+let g:airline_powerline_fonts=1               " enable devicons
+let g:webdevicons_enable_airline_tabline=1    " idk which tabs
+let g:webdevicons_enable_airline_statusline=1 " bottom line
+"----------------------------------------------------------------------------------------
+
+" let g:ale_filename_mappings = [
+"       \       ['/workspace/c/mooh/src/editor', 'editor'],
+"       \]
+" let g:ale_linters = { 'c': 'gcc -I src' }
+" let g:ale_c_parse_makefile = 1
+
+"COC ------------------------------------------------------------------------------------
+" let b:coc_diagnostic_disable = 1
+
+" clangd: c & c++, vimlsp: '.vim' files
+let g:coc_global_extensions = ['coc-clangd', 'coc-git', 'coc-vimlsp'] " , 'coc-json'
+" " goto code
+" nmap gd <Plug>(coc-definition)
+" nmap gy <Plug>(coc-type-definition)
+" nmap gi <Plug>(coc-implementation)
+" nmap gr <Plug>(coc-references)
+"----------------------------------------------------------------------------------------
+
+"vimwiki --------------------------------------------------------------------------------
+ hi VimwikiHeader1 ctermfg=114 guifg=#98c379
+ hi VimwikiHeader2 ctermfg=173 guifg=#d19a66
+ hi VimwikiHeader3 ctermbg=17 guifg=#e06c75 
+ hi VimwikiHeader4 ctermbg=17 guifg=#61afef 
+ hi VimwikiHeader5 guifg=#00FFFF
+ hi VimwikiHeader6 guifg=#FFFF00
+ " vimwiki path
+ let g:vimwiki_list = [{'path': '/workspace/vim/vimwiki'}]
+ "----------------------------------------------------------------------------------------
+
+"hexokinase -----------------------------------------------------------------------------
+" type of highlighting
+let g:Hexokinase_highlighters = [ 'sign_column' ] 
+" type of color formats recognized
+let g:Hexokinase_optInPatterns = [
+      \     'full_hex',
+      \     'triple_hex',
+      \     'rgb',
+      \     'rgba',
+      \     'hsl',
+      \     'hsla',
+      \     'colour_names'
+      \ ]
+"----------------------------------------------------------------------------------------
+
+" custom syntax highlighting -----------------------------------------------------------
+au BufRead,BufNewFile *.code setfiletype code
+au BufRead,BufNewFile *.mooh setfiletype mooh
+"---------------------------------------------------------------------------------------
+
+" OmniSharp------------------------------------------------------------------------------
+let g:ale_linters = {
+\ 'cs': ['OmniSharp']
+\}
+
+let g:OmniSharp_highlight_groups = {
+			\ 'Comment': 'csComment',
+			\ 'ClassName': 'csType',
+			\ 'StructName': 'csType',
+			\ 'EnumName': 'csType',
+			\ 'ParameterName': 'csLocVar',
+			\ 'LocalName': 'csLocVar',
+			\ 'FieldName': 'csVar',
+			\ 'ConstantName': 'csVar',
+			\ 'PropertyName': 'csVar',
+			\ 'EnumMemberName': 'csVar',
+			\ 'MethodName': 'csFunc',
+			\ 'ExtensionMethodName': 'csFunc',
+			\ 'NamespaceName': 'csNamespace',
+			\ 'StringLiteral': 'csValue',
+			\ 'VerbatimStringLiteral': 'csValue',
+			\ 'NumericLiteral': 'csValue'
+			\}
+hi csVar ctermfg=white
+hi csLocVar ctermfg=white
+hi csComment ctermfg=darkred
+hi csFunc ctermfg=yellow
+hi csNamespace ctermfg=white
+hi csValue ctermfg=magenta
+
+" ---------------------------------------------------------------------------------------
+
+if &diffopt !~# 'internal'
+  set diffexpr=MyDiff()
+endif
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg1 = substitute(arg1, '!', '\!', 'g')
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg2 = substitute(arg2, '!', '\!', 'g')
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  let arg3 = substitute(arg3, '!', '\!', 'g')
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  let cmd = substitute(cmd, '!', '\!', 'g')
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+
+endfunction
+
