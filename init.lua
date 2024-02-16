@@ -378,7 +378,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
-    file_ignore_patterns = { ".git\\", ".vs\\", ".git/", ".vs/", "%.o", "%.zip", "%.tex", "%.mesh", "%.swp", "%.un~", "%.%~" },
+    file_ignore_patterns = { ".git\\", ".vs\\", ".git/", ".vs/", "%.o", "%.zip", "%.tex", "%.mesh", "%.swp", "%.un~", "%.*%~" },
     mappings = {
       i = {
         ['<C-u>'] = false,
