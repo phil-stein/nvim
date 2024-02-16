@@ -128,75 +128,50 @@ require('lazy').setup({
     },
   },
 
-  {
-    -- floating command line
-    'VonHeikemen/fine-cmdline.nvim',
-    dependencies = { 'MunifTanjim/nui.nvim' },
-    -- open with :
-    vim.api.nvim_set_keymap('n', ':', '<cmd>FineCmdline<CR>', {noremap = true}),
-    --  open with enter
-    -- vim.api.nvim_set_keymap('n', '<CR>', '<cmd>FineCmdline<CR>', {noremap=true}),
-    config = function()
-      require('fine-cmdline').setup({
-        cmdline = {
-          enable_keymaps = true,
-          smart_history = true,
-          prompt = ': '
-        },
-        popup = {
-          position = {
-            row = '50%',  -- '10%'
-            col = '50%',
-          },
-          size = {
-            width = '60%',
-          },
-          border = {
-            style = 'rounded',
-          },
-          win_options = {
-            -- winhighlight = 'Normal:Normal,FloatBorder:FloatBorder',  -- highlight border
-            winhighlight = 'Normal:Normal,FloatBorder:Normal',  -- dont highlight border
-          },
-        },
-        hooks = {
-          -- before_mount = function(input)
-          --   -- code
-          -- end,
-          after_mount = function(input)
-            -- make escape go to normal mode
-            vim.keymap.set('i', '<Esc>', '<cmd>stopinsert<cr>', {buffer = input.bufnr})
-          end,
-          -- set_keymaps = function(imap, feedkeys)
-          --   -- code
-          -- end
-        }
-      })
-    end,
-  },
-
-  {
-    -- floating terminal
-    'voldikss/vim-floaterm',
-    -- toggle open/closed with ctrl-t
-    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR>'),
-    vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR>'),
-
-  },
-
-  {
-    -- vimwiki
-    "vimwiki/vimwiki",
-    init = function()
-        vim.g.vimwiki_list = {
-            {
-            path = '/workspace/vim/vimwiki',
-            syntax = 'default',
-            ext = '.wiki',
-            },
-        }
-    end,
-  },
+  -- {
+  --   -- floating command line
+  --   'VonHeikemen/fine-cmdline.nvim',
+  --   dependencies = { 'MunifTanjim/nui.nvim' },
+  --   
+  --   -- open with :
+  --   vim.api.nvim_set_keymap('n', ':', '<cmd>FineCmdline<CR>', {noremap = true}),
+  --   
+  --   require('fine-cmdline').setup({
+  --     
+  --     -- cmdline = {
+  --     --   enable_keymaps = true,
+  --     --   smart_history = true,
+  --     --   prompt = ': '
+  --     -- },
+  --     -- popup = {
+  --     --   position = {
+  --     --     row = '10%',
+  --     --     col = '50%',
+  --     --   },
+  --     --   size = {
+  --     --     width = '60%',
+  --     --   },
+  --     --   border = {
+  --     --     style = 'rounded',
+  --     --   },
+  --     --   win_options = {
+  --     --     winhighlight = 'Normal:Normal,FloatBorder:FloatBorder',
+  --     --   },
+  --     -- },
+  --     -- hooks = {
+  --     --   -- before_mount = function(input)
+  --     --   --   -- code
+  --     --   -- end,
+  --     --   after_mount = function(input)
+  --     --     -- make escape go to normal mode
+  --     --     vim.keymap.set('i', '<Esc>', '<cmd>stopinsert<cr>', {buffer = input.bufnr})
+  --     --   end
+  --     --   -- set_keymaps = function(imap, feedkeys)
+  --     --   --   -- code
+  --     --   -- end
+  --     -- }
+  --   })
+  -- },
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
@@ -448,11 +423,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
-    file_ignore_patterns = {
-      ".git\\", ".vs\\", ".cache\\", ".git/", ".vs/", ".cache/",
-      "%.o", "%.zip",
-      "%.tex",
-      "%.mesh", "%.swp", "%.un~", "%.*%~" },
+    file_ignore_patterns = { ".git\\", ".vs\\", ".git/", ".vs/", "%.o", "%.zip", "%.tex", "%.mesh", "%.swp", "%.un~", "%.*%~" },
     mappings = {
       i = {
         ['<C-u>'] = false,
@@ -733,11 +704,10 @@ mason_lspconfig.setup_handlers {
 -- See `:help cmp`
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
--- require('luasnip.loaders.from_vscode').lazy_load() -- disabled, loads vs_code style snippets
+require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
 cmp.setup {
-  -- enabled = false,  -- disable cpm
   snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
