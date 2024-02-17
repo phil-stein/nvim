@@ -458,6 +458,7 @@ require('telescope').setup {
   defaults = {
     file_ignore_patterns = {
       ".git\\", ".vs\\", ".cache\\", ".git/", ".vs/", ".cache/",
+      "_bin\\", "_bin/", "bin\\", "bin/",
       "%.o", "%.zip",
       "%.tex","%.mesh",
       "%.swp", "%.un~", "%.*%~" },
@@ -642,6 +643,8 @@ local on_attach = function(_, bufnr)
   end, '[C]ode [A]ction')
 
   nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+  -- nmap('GD', ":vsplit<CR>gd", "[G]oto [D]efinition, in vert split")
+  nmap('GD', ':vsplit | lua vim.lsp.buf.definition()<CR>', '[G]oto [D]efinition, in vsplit')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
   nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
@@ -757,14 +760,27 @@ cmp.setup {
   completion = {
     completeopt = 'menu,menuone,noinsert',
   },
+  window = {
+    -- completion = cmp.config.window.bordered(),
+    completion = {
+      winhighlight = 'Normal:Normal,FloatBorder:Normal',  -- dont highlight border
+      border = "rounded", -- "none", "single", "double", "solid", "shadow"
+    },
+    -- documentation = cmp.config.window.bordered(),
+    documentation = {
+      winhighlight = 'Normal:Normal,FloatBorder:Normal',  -- dont highlight border
+      border = "rounded", -- "none", "single", "double", "solid", "shadow"
+    },
+  },
   mapping = cmp.mapping.preset.insert {
     ['<C-n>'] = cmp.mapping.select_next_item(),
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete {},
+    -- ['<C-Space>'] = cmp.mapping.complete {},
+    -- ['<C-CR>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
+      -- behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
     ['<Tab>'] = cmp.mapping(function(fallback)
@@ -788,7 +804,7 @@ cmp.setup {
   },
   sources = {
     { name = 'nvim_lsp' },
-    { name = 'luasnip' },
+    -- { name = 'luasnip' },
     { name = 'path' },
   },
 }
