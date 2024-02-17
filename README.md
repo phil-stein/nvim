@@ -18,14 +18,15 @@ windows: `git clone https://github.com/phil-stein/nvim %AppData%../local/nvim` <
 	- [telescope-file-browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) | file browser
 - [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) 
 - [devicons](https://github.com/ryanoasis/vim-devicons) | use nerd-fonts for icons
-- [lualine](https://github.com/nvim-lualine/lualine.nvim) | better commandline
+- [lualine](https://github.com/nvim-lualine/lualine.nvim) | better commandline, tab-line
 - [fine-cmdline](https://github.com/VonHeikemen/fine-cmdline.nvim) | floating commandline
 	- [nui](https://github.com/MunifTanjim/nui.nvim/tree/main) | ui-library, required by fine-cmdline
 - [vim-floatterm](https://github.com/voldikss/vim-floaterm) | floating terminal
 - [vimwiki](https://github.com/vimwiki/vimwiki) | notes, etc.
 - [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | code-completion
 	- luasnip | snippets, disabled
-- [barbar.nvim](https://github.com/romgrk/barbar.nvim) | tab-line 
+- _disabled_ [barbar.nvim](https://github.com/romgrk/barbar.nvim) | disabled, tab-line
+- _disabled_ [tabline.nvim](https://github.com/kdheepak/tabline.nvim) | disabled, tab-line
 - [which-key.nvim](https://github.com/folke/which-key.nvim) | show keymaps while typing them
 - gitsigns
 - indent-blankline.nvim

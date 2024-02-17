@@ -38,6 +38,11 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now :)
 --]]
 
+-- [[ useful characters, chars, icons, deviocons ]]
+-- '', '', '', '' -> seperators
+-- ─│─│╭╮╯╰           -> rounded window corners
+
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
@@ -201,33 +206,61 @@ require('lazy').setup({
     vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
   },
 
-  {
-    -- tab line 
-    'romgrk/barbar.nvim',
-    -- dependencies = {
-    --   'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
-    -- },
-    init = function() vim.g.barbar_auto_setup = false end,
-    opts = {
-      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-      -- animation = true,        -- not sure
-      -- insert_at_start = true,  -- new tab at start
-      -- insert_at_end = false,   -- new tab at end
-      auto_hide = 1,  -- hide when only 1 tab
-      -- Enables/disable clickable tabs
-      --  - left-click: go to buffer
-      --  - middle-click: delete buffer
-      clickable = true,
-      -- A buffer to this direction will be focused (if it exists) when closing the current buffer.
-      -- Valid options are 'left' (the default), 'previous', and 'right'
-      focus_on_close = 'previous',
-      -- Hide inactive buffers and file extensions. options are `alternate`, `current`, `visible`, 'extensions', 'inactive'
-      -- hide = { inactive = true},
-      -- Enable/disable current/total tabpages indicator (top right corner)
-      tabpages = true,
-    },
-  },
-
+  -- {
+  --   -- tab line 
+  --   'romgrk/barbar.nvim',
+  --   -- dependencies = {
+  --   --   'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+  --   -- },
+  --   init = function() vim.g.barbar_auto_setup = false end,
+  --   opts = {
+  --     -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+  --     -- animation = true,        -- not sure
+  --     -- insert_at_start = true,  -- new tab at start
+  --     -- insert_at_end = false,   -- new tab at end
+  --     auto_hide = 1,  -- hide when only 1 tab
+  --     -- Enables/disable clickable tabs
+  --     --  - left-click: go to buffer
+  --     --  - middle-click: delete buffer
+  --     clickable = true,
+  --     -- A buffer to this direction will be focused (if it exists) when closing the current buffer.
+  --     -- Valid options are 'left' (the default), 'previous', and 'right'
+  --     focus_on_close = 'previous',
+  --     -- Hide inactive buffers and file extensions. options are `alternate`, `current`, `visible`, 'extensions', 'inactive'
+  --     -- hide = { inactive = true},
+  --     -- Enable/disable current/total tabpages indicator (top right corner)
+  --     tabpages = true,
+  --   },
+  -- },
+  -- {
+  --   -- tabline, tab-line, tab line
+  --   'kdheepak/tabline.nvim',
+  --   config = function()
+  --     require'tabline'.setup {
+  --       -- Defaults configuration options
+  --       enable = true,
+  --       options = {
+  --       -- If lualine is installed tabline will use separators configured in lualine by default.
+  --       -- These options can be used to override those settings.
+  --         section_separators   = {'', ''},
+  --         component_separators = {'', ''},
+  --         max_bufferline_percent = 66, -- set to nil by default, and it uses vim.o.columns * 2/3
+  --         show_tabs_always = false, -- this shows tabs only when there are more than one tab or if the first tab is named
+  --         show_devicons = true, -- this shows devicons in buffer section
+  --         show_bufnr = false, -- this appends [bufnr] to buffer section,
+  --         show_filename_only = false, -- shows base filename only instead of relative path in filename
+  --         modified_icon = "+ ", -- change the default modified icon
+  --         modified_italic = false, -- set to true by default; this determines whether the filename turns italic if modified
+  --         show_tabs_only = false, -- this shows only tabs instead of tabs + buffers
+  --       }
+  --     }
+  --     vim.cmd[[
+  --       set guioptions-=e " Use showtabline in gui vim
+  --       set sessionoptions+=tabpages,globals " store tabpages and globals in session
+  --     ]]
+  --   end,
+  --   requires = { { 'hoob3rt/lualine.nvim', opt=true }, {'kyazdani42/nvim-web-devicons', opt = true} }
+  -- },
   {
     -- vimwiki
     "vimwiki/vimwiki",
@@ -256,66 +289,65 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
-      on_attach = function(bufnr)
-        local gs = package.loaded.gitsigns
+      -- on_attach = function(bufnr)
+      --   local gs = package.loaded.gitsigns
 
-        local function map(mode, l, r, opts)
-          opts = opts or {}
-          opts.buffer = bufnr
-          vim.keymap.set(mode, l, r, opts)
-        end
+      --   local function map(mode, l, r, opts)
+      --     opts = opts or {}
+      --     opts.buffer = bufnr
+      --     vim.keymap.set(mode, l, r, opts)
+      --   end
+      --   -- Navigation
+      --   map({ 'n', 'v' }, ']c', function()
+      --     if vim.wo.diff then
+      --       return ']c'
+      --     end
+      --     vim.schedule(function()
+      --       gs.next_hunk()
+      --     end)
+      --     return '<Ignore>'
+      --   end, { expr = true, desc = 'Jump to next hunk' })
 
-        -- Navigation
-        map({ 'n', 'v' }, ']c', function()
-          if vim.wo.diff then
-            return ']c'
-          end
-          vim.schedule(function()
-            gs.next_hunk()
-          end)
-          return '<Ignore>'
-        end, { expr = true, desc = 'Jump to next hunk' })
+      --   map({ 'n', 'v' }, '[c', function()
+      --     if vim.wo.diff then
+      --       return '[c'
+      --     end
+      --     vim.schedule(function()
+      --       gs.prev_hunk()
+      --     end)
+      --     return '<Ignore>'
+      --   end, { expr = true, desc = 'Jump to previous hunk' })
 
-        map({ 'n', 'v' }, '[c', function()
-          if vim.wo.diff then
-            return '[c'
-          end
-          vim.schedule(function()
-            gs.prev_hunk()
-          end)
-          return '<Ignore>'
-        end, { expr = true, desc = 'Jump to previous hunk' })
+      --   -- Actions
+      --   -- visual mode
+      --   map('v', '<leader>hs', function()
+      --     gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+      --   end, { desc = 'stage git hunk' })
+      --   map('v', '<leader>hr', function()
+      --     gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+      --   end, { desc = 'reset git hunk' })
+      --   -- normal mode
+      --   map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
+      --   map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
+      --   map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
+      --   map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+      --   map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
+      --   map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
+      --   map('n', '<leader>hb', function()
+      --     gs.blame_line { full = false }
+      --   end, { desc = 'git blame line' })
+      --   map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
+      --   map('n', '<leader>hD', function()
+      --     gs.diffthis '~'
+      --   end, { desc = 'git diff against last commit' })
 
-        -- Actions
-        -- visual mode
-        map('v', '<leader>hs', function()
-          gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
-        end, { desc = 'stage git hunk' })
-        map('v', '<leader>hr', function()
-          gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-        end, { desc = 'reset git hunk' })
-        -- normal mode
-        map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
-        map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
-        map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
-        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
-        map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
-        map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
-        map('n', '<leader>hb', function()
-          gs.blame_line { full = false }
-        end, { desc = 'git blame line' })
-        map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
-        map('n', '<leader>hD', function()
-          gs.diffthis '~'
-        end, { desc = 'git diff against last commit' })
+      --   -- Toggles
+      --   map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
+      --   map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
 
-        -- Toggles
-        map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
-        map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
-
-        -- Text object
-        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
-      end,
+      --   -- Text object
+      --   map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
+      -- end,
     },
   },
 
@@ -359,6 +391,15 @@ require('lazy').setup({
         lualine_y = {'progress'},
         lualine_z = {'location'}
       },
+      -- show tabline
+      -- tabline = {
+      --   lualine_a = {'buffers'},
+      --   lualine_b = {'branch'},
+      --   lualine_c = {'filename'},
+      --   lualine_x = {},
+      --   lualine_y = {},
+      --   lualine_z = {'tabs'},
+      -- },
     },
   },
 
@@ -525,6 +566,7 @@ require('telescope').setup {
         ['<C-u>'] = false,
         ['<C-d>'] = false,
         ['<C-s>'] = 'select_horizontal',  -- open in horizontal split
+        ['<C-y>'] = 'select_horizontal',  -- open in horizontal split
         ['<C-x>'] = 'select_vertical',    -- open in vertical split
         -- opn in tab is <C-t>
       },
