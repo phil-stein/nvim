@@ -58,7 +58,7 @@ windows: `git clone https://github.com/phil-stein/nvim %AppData%../local/nvim` <
 	- K		  -> hover documentation
 - float-term 
 	- <C-t>	          -> toggle terminal
-	- code-completion
+- code-completion
 	- <CR>		  -> accept completion
 	- <Tab>		  -> cycle through completions
 

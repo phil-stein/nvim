@@ -196,8 +196,9 @@ require('lazy').setup({
     -- toggle open/closed with ctrl-t, 
     -- autoclose=2 so dont need :FloatermKill
     -- hi FloatermBorder to color to the result of ':hi Normal'
-    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR>', { silent = true }),
-    vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR>', { silent = true }),
+    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
+    -- vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
+    vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
   },
 
   {
@@ -209,7 +210,7 @@ require('lazy').setup({
     init = function() vim.g.barbar_auto_setup = false end,
     opts = {
       -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-      -- animation = true,
+      -- animation = true,        -- not sure
       -- insert_at_start = true,  -- new tab at start
       -- insert_at_end = false,   -- new tab at end
       auto_hide = 1,  -- hide when only 1 tab
@@ -217,6 +218,13 @@ require('lazy').setup({
       --  - left-click: go to buffer
       --  - middle-click: delete buffer
       clickable = true,
+      -- A buffer to this direction will be focused (if it exists) when closing the current buffer.
+      -- Valid options are 'left' (the default), 'previous', and 'right'
+      focus_on_close = 'previous',
+      -- Hide inactive buffers and file extensions. options are `alternate`, `current`, `visible`, 'extensions', 'inactive'
+      -- hide = { inactive = true},
+      -- Enable/disable current/total tabpages indicator (top right corner)
+      tabpages = true,
     },
   },
 
