@@ -644,7 +644,7 @@ local on_attach = function(_, bufnr)
 
   nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
   -- nmap('GD', ":vsplit<CR>gd", "[G]oto [D]efinition, in vert split")
-  nmap('GD', ':vsplit | lua vim.lsp.buf.definition()<CR>', '[G]oto [D]efinition, in vsplit')
+  nmap('GD', ':vsplit | lua vim.lsp.buf.definition()<CR>', '[G]oto [D]efinition, in vsplit') -- https://neovim.discourse.group/t/jump-to-definition-in-vertical-horizontal-split/2605/2
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
   nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
