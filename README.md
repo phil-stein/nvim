@@ -11,6 +11,8 @@ config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
 	* [mason](https://github.com/williamboman/mason.nvim) | lsp-, linter-manager
 		* [mason-lsp-config](https://github.com/williamboman/mason-lspconfig.nvim) | lsp configs for mason
 	* [telescope](https://github.com/nvim-telescope/telescope.nvim) | file-navigation
+		* fzy
+		* [telescope-file-browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) | file browser
 	* [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) 
 	* [devicons](https://github.com/ryanoasis/vim-devicons) | use nerd-fonts for icons
 	* [lualine](https://github.com/nvim-lualine/lualine.nvim) | better commandline
@@ -21,7 +23,8 @@ config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
 	* [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | code-completion
 		* luasnip | snippets, disabled
 	* [barbar.nvim](https://github.com/romgrk/barbar.nvim) | tab-line 
-	* which-key.nvim | show keymaps while typing them
+	* [which-key.nvim](https://github.com/folke/which-key.nvim) | show keymaps while typing them
+	* gitsigns
 	* indent-blankline.nvim
 	* Comment.nvim
 
@@ -32,14 +35,16 @@ config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
 
 ## hotkeys
 	* telescope
+		* ? (normal)	  -> help / key mappings
 		* <C-s>		  -> open in horizontal split
 		* <C-x>   	  -> open in vertical split
 		* <C-t>   	  -> open in tab
-		* <leader>sf      -> search files
+		* <leader>f	  -> search files
 		* <leader>?       -> search recently opened
 		* <leader><space> -> search open buffers
 		* <leader>/	  -> search keyword, fuzzyfind
 		* <leader>gf	  -> search git files
+		* <C-d>		  -> file broswer
 	* lsp
 		* <leader>rn	  -> rename
 		* gd		  -> goto defenition

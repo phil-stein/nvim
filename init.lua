@@ -191,11 +191,13 @@ require('lazy').setup({
   {
     -- floating terminal
     'voldikss/vim-floaterm',
-    -- toggle open/closed with ctrl-t, autoclose so dont need :FloatermKill
-    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
-    vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
-    -- vim.api.nvim_set_var('FloatermBorder', 'guibg=black'),
-    vim.api.nvim_set_hl(0, 'FloatermBorder', { bg = "#ffffff" }), -- { fg = "#ffffff", bg = "#333333" })
+
+    -- vim.api.nvim_set_hl(0, 'FloatermBorder', { fg = "#ffffff", bg = "#123456" }), -- dont work
+    -- toggle open/closed with ctrl-t, 
+    -- autoclose=2 so dont need :FloatermKill
+    -- hi FloatermBorder to color to the result of ':hi Normal'
+    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR>', { silent = true }),
+    vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR>', { silent = true }),
   },
 
   {
@@ -234,81 +236,80 @@ require('lazy').setup({
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
-  -- honestly not sure what this is for
-  -- {
-  --   -- Adds git related signs to the gutter, as well as utilities for managing changes
-  --   'lewis6991/gitsigns.nvim',
-  --   opts = {
-  --     -- See `:help gitsigns.txt`
-  --     signs = {
-  --       add = { text = '+' },
-  --       change = { text = '~' },
-  --       delete = { text = '_' },
-  --       topdelete = { text = '‾' },
-  --       changedelete = { text = '~' },
-  --     },
-  --     on_attach = function(bufnr)
-  --       local gs = package.loaded.gitsigns
+  {
+    -- Adds git related signs to the gutter, as well as utilities for managing changes
+    'lewis6991/gitsigns.nvim',
+    opts = {
+      -- See `:help gitsigns.txt`
+      signs = {
+        add = { text = '+' },
+        change = { text = '~' },
+        delete = { text = '_' },
+        topdelete = { text = '‾' },
+        changedelete = { text = '~' },
+      },
+      on_attach = function(bufnr)
+        local gs = package.loaded.gitsigns
 
-  --       local function map(mode, l, r, opts)
-  --         opts = opts or {}
-  --         opts.buffer = bufnr
-  --         vim.keymap.set(mode, l, r, opts)
-  --       end
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
 
-  --       -- Navigation
-  --       map({ 'n', 'v' }, ']c', function()
-  --         if vim.wo.diff then
-  --           return ']c'
-  --         end
-  --         vim.schedule(function()
-  --           gs.next_hunk()
-  --         end)
-  --         return '<Ignore>'
-  --       end, { expr = true, desc = 'Jump to next hunk' })
+        -- Navigation
+        map({ 'n', 'v' }, ']c', function()
+          if vim.wo.diff then
+            return ']c'
+          end
+          vim.schedule(function()
+            gs.next_hunk()
+          end)
+          return '<Ignore>'
+        end, { expr = true, desc = 'Jump to next hunk' })
 
-  --       map({ 'n', 'v' }, '[c', function()
-  --         if vim.wo.diff then
-  --           return '[c'
-  --         end
-  --         vim.schedule(function()
-  --           gs.prev_hunk()
-  --         end)
-  --         return '<Ignore>'
-  --       end, { expr = true, desc = 'Jump to previous hunk' })
+        map({ 'n', 'v' }, '[c', function()
+          if vim.wo.diff then
+            return '[c'
+          end
+          vim.schedule(function()
+            gs.prev_hunk()
+          end)
+          return '<Ignore>'
+        end, { expr = true, desc = 'Jump to previous hunk' })
 
-  --       -- Actions
-  --       -- visual mode
-  --       map('v', '<leader>hs', function()
-  --         gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
-  --       end, { desc = 'stage git hunk' })
-  --       map('v', '<leader>hr', function()
-  --         gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-  --       end, { desc = 'reset git hunk' })
-  --       -- normal mode
-  --       map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
-  --       map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
-  --       map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
-  --       map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
-  --       map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
-  --       map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
-  --       map('n', '<leader>hb', function()
-  --         gs.blame_line { full = false }
-  --       end, { desc = 'git blame line' })
-  --       map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
-  --       map('n', '<leader>hD', function()
-  --         gs.diffthis '~'
-  --       end, { desc = 'git diff against last commit' })
+        -- Actions
+        -- visual mode
+        map('v', '<leader>hs', function()
+          gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+        end, { desc = 'stage git hunk' })
+        map('v', '<leader>hr', function()
+          gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+        end, { desc = 'reset git hunk' })
+        -- normal mode
+        map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
+        map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
+        map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
+        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+        map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
+        map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
+        map('n', '<leader>hb', function()
+          gs.blame_line { full = false }
+        end, { desc = 'git blame line' })
+        map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
+        map('n', '<leader>hD', function()
+          gs.diffthis '~'
+        end, { desc = 'git diff against last commit' })
 
-  --       -- Toggles
-  --       map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
-  --       map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+        -- Toggles
+        map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
+        map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
 
-  --       -- Text object
-  --       map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
-  --     end,
-  --   },
-  -- },
+        -- Text object
+        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
+      end,
+    },
+  },
 
   {
     -- Theme inspired by Atom
@@ -383,6 +384,12 @@ require('lazy').setup({
         cond = function()
           return vim.fn.executable 'make' == 1
         end,
+      },
+      {
+        -- telescope file browser
+        "nvim-telescope/telescope-file-browser.nvim",
+        -- dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+        vim.api.nvim_set_keymap("n","<C-d>", ":Telescope file_browser<CR>", { noremap = true }),
       },
     },
   },
@@ -482,6 +489,22 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
+  extensions = {
+    file_browser = {
+      -- theme = "ivy",
+      initial_mode = 'normal',  -- open in normal mode
+      -- disables netrw and use telescope-file-browser in its place
+      hijack_netrw = true,
+      -- mappings = {
+      --   ["i"] = {
+      --     -- your custom insert mode mappings
+      --   },
+      --   ["n"] = {
+      --     -- your custom normal mode mappings
+      --   },
+      -- },
+    },
+  },
   defaults = {
     file_ignore_patterns = {
       ".git\\", ".vs\\", ".cache\\", ".git/", ".vs/", ".cache/",
@@ -498,13 +521,10 @@ require('telescope').setup {
         -- opn in tab is <C-t>
       },
     },
-  },
-}
     -- prompt_prefix = "❯ ",
     -- selection_caret = "❯ ",
-        -- ['<C-s>'] = require('telescope.actions').select_horizontal(),
-        -- ['<C-s>'] = telescope.actions.select_horizontal(),
-        -- ['<C-s>'] = 'select_horizontal',
+  },
+}
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
@@ -565,7 +585,7 @@ end
 vim.keymap.set('n', '<leader>s/', telescope_live_grep_open_files,           { desc = '[S]earch [/] in Open Files' })
 vim.keymap.set('n', '<leader>ss', require('telescope.builtin').builtin,     { desc = '[S]earch [S]elect Telescope' })
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files,   { desc = 'Search [G]it [F]iles' })
-vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files,  { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>f',  require('telescope.builtin').find_files,  { desc = 'search [F]iles' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags,   { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep,   { desc = '[S]earch by [G]rep' })
