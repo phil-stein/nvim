@@ -22,7 +22,7 @@ windows: `git clone https://github.com/phil-stein/nvim %AppData%../local/.` <br>
 	* [fine-cmdline](https://github.com/VonHeikemen/fine-cmdline.nvim) | floating commandline
 		* [nui](https://github.com/MunifTanjim/nui.nvim/tree/main) | ui-library, required by fine-cmdline
 	* [vim-floatterm](https://github.com/voldikss/vim-floaterm) | floating terminal
-	* [winwiki](https://github.com/vimwiki/vimwiki) | notes, etc.
+	* [vimwiki](https://github.com/vimwiki/vimwiki) | notes, etc.
 	* [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | code-completion
 		* luasnip | snippets, disabled
 	* [barbar.nvim](https://github.com/romgrk/barbar.nvim) | tab-line 
