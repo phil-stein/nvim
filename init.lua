@@ -465,6 +465,9 @@ require('telescope').setup {
       i = {
         ['<C-u>'] = false,
         ['<C-d>'] = false,
+        ['<C-s>'] = 'select_horizontal',  -- open in horizontal split
+        ['<C-x>'] = 'select_vertical',    -- open in vertical split
+        -- opn in tab is <C-t>
       },
     },
   },
