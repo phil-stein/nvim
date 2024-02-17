@@ -11,7 +11,9 @@ config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
 	* [mason](https://github.com/williamboman/mason.nvim) | lsp-, linter-manager
 		* [mason-lsp-config](https://github.com/williamboman/mason-lspconfig.nvim) | lsp configs for mason
 	* [telescope](https://github.com/nvim-telescope/telescope.nvim) | file-navigation
-		* fzy
+		* ripgrep
+		* plenary
+		* telescope-fzf-native | fuzzy finder
 		* [telescope-file-browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) | file browser
 	* [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) 
 	* [devicons](https://github.com/ryanoasis/vim-devicons) | use nerd-fonts for icons
