@@ -3,5 +3,7 @@
 *.swp
 *.swo
 
+# lazy-lock
+!lazy-lock.json
 
 
