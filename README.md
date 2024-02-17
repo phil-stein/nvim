@@ -20,7 +20,8 @@ config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
 	* [winwiki](https://github.com/vimwiki/vimwiki) | notes, etc.
 	* [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | code-completion
 		* luasnip | snippets, disabled
-	* which-key.nvim
+	* [barbar.nvim](https://github.com/romgrk/barbar.nvim) | tab-line 
+	* which-key.nvim | show keymaps while typing them
 	* indent-blankline.nvim
 	* Comment.nvim
 

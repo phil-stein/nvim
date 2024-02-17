@@ -44,6 +44,12 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- tabs as spaces
+vim.o.tabstop     = 2     -- A TAB character looks like 4 spaces
+vim.o.expandtab   = true  -- Pressing the TAB key will insert spaces instead of a TAB character
+vim.o.softtabstop = 2     -- Number of spaces inserted instead of a TAB character
+vim.o.shiftwidth  = 2     -- Number of spaces inserted when indenting
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -148,7 +154,7 @@ require('lazy').setup({
         cmdline = {
           enable_keymaps = true,
           smart_history = true,
-          prompt = '> '
+          prompt = '>'
         },
         popup = {
           position = {
@@ -185,10 +191,31 @@ require('lazy').setup({
   {
     -- floating terminal
     'voldikss/vim-floaterm',
-    -- toggle open/closed with ctrl-t
-    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR>'),
-    vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR>'),
+    -- toggle open/closed with ctrl-t, autoclose so dont need :FloatermKill
+    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
+    vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
+    -- vim.api.nvim_set_var('FloatermBorder', 'guibg=black'),
+    vim.api.nvim_set_hl(0, 'FloatermBorder', { bg = "#ffffff" }), -- { fg = "#ffffff", bg = "#333333" })
+  },
 
+  {
+    -- tab line 
+    'romgrk/barbar.nvim',
+    -- dependencies = {
+    --   'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+    -- },
+    init = function() vim.g.barbar_auto_setup = false end,
+    opts = {
+      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+      -- animation = true,
+      -- insert_at_start = true,  -- new tab at start
+      -- insert_at_end = false,   -- new tab at end
+      auto_hide = 1,  -- hide when only 1 tab
+      -- Enables/disable clickable tabs
+      --  - left-click: go to buffer
+      --  - middle-click: delete buffer
+      clickable = true,
+    },
   },
 
   {
