@@ -24,13 +24,14 @@ windows: `git clone https://github.com/phil-stein/nvim %appdata%\..\local\nvim` 
 - [vim-floatterm](https://github.com/voldikss/vim-floaterm) | floating terminal
 - [vimwiki](https://github.com/vimwiki/vimwiki) | notes, etc.
 - [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | code-completion
-	- luasnip | snippets, disabled
-- _disabled_ [barbar.nvim](https://github.com/romgrk/barbar.nvim) | disabled, tab-line
-- _disabled_ [tabline.nvim](https://github.com/kdheepak/tabline.nvim) | disabled, tab-line
+	- _disabled_ luasnip | snippets
+- _disabled_ [barbar.nvim](https://github.com/romgrk/barbar.nvim) | tab-line
+- _disabled_ [tabline.nvim](https://github.com/kdheepak/tabline.nvim) | tab-line
 - [which-key.nvim](https://github.com/folke/which-key.nvim) | show keymaps while typing them
 - gitsigns
 - indent-blankline.nvim
 - Comment.nvim
+- [vim-glsl](https://github.com/tikhomirov/vim-glsl) | glsl-highlighting
 
 ## commands
 - :Lazy        -> open plugin manager ui
@@ -59,6 +60,7 @@ windows: `git clone https://github.com/phil-stein/nvim %appdata%\..\local\nvim` 
 	- K		  -> hover documentation
 - float-term 
 	- <C-t>	          -> toggle terminal
+	- <C-b>						-> run build_editor
 - code-completion
 	- <CR>		  -> accept completion
 	- <Tab>		  -> cycle through completions

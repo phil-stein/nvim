@@ -1,46 +1,12 @@
---[[
 
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-
-Kickstart.nvim is *not* a distribution.
-
-Kickstart.nvim is a template for your own configuration.
-  The goal is that you can read every line of code, top-to-bottom, understand
-  what your configuration is doing, and modify it to suit your needs.
-
-  Once you've done that, you should start exploring, configuring and tinkering to
-  explore Neovim!
-
-  If you don't know anything about Lua, I recommend taking some time to read through
-  a guide. One possible example:
-  - https://learnxinyminutes.com/docs/lua/
-
-
-  And then you can explore or search through `:help lua-guide`
-  - https://neovim.io/doc/user/lua-guide.html
-
-
-Kickstart Guide:
-
-I have left several `:help X` comments throughout the init.lua
-You should run that command and read that help section for more information.
-
-In addition, I have some `NOTE:` items throughout the file.
-These are for you, the reader to help understand what is happening. Feel free to delete
-them once you know what you're doing, but they should serve as a guide for when you
-are first encountering a few different constructs in your nvim config.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now :)
---]]
+-- config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)
+-- windows: `git clone https://github.com/phil-stein/nvim %AppData%../local/nvim`
 
 -- [[ useful characters, chars, icons, deviocons ]]
 -- '', '', '', '' -> seperators
+-- '', '', '', '' -> seperators
 -- ─│─│╭╮╯╰           -> rounded window corners
+-- ─│─│┌┐┘└           -> window corners
 
 
 -- Set <space> as the leader key
@@ -54,6 +20,7 @@ vim.o.tabstop     = 2     -- A TAB character looks like 4 spaces
 vim.o.expandtab   = true  -- Pressing the TAB key will insert spaces instead of a TAB character
 vim.o.softtabstop = 2     -- Number of spaces inserted instead of a TAB character
 vim.o.shiftwidth  = 2     -- Number of spaces inserted when indenting
+vim.o.scrolloff   = 8     -- offset from bottom/top when scrolling
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
@@ -78,6 +45,17 @@ vim.opt.rtp:prepend(lazypath)
   vim.keymap.set('n', ',', ':resize +4<CR>')
   vim.keymap.set('n', ';', ':resize -4<CR>')
 
+-- doent work
+-- -- tabline tab tabs tab-highlights
+-- vim.highlight.
+-- vim.api.nvim_get_hl_id_by_name
+-- vim.api.nvim_set_hl(0, 'TabLine',     { fg = '#999999', bg = '#000000' } )
+-- vim.api.nvim_set_hl(0, 'TabLineFill', { fg = '#000000', bg = '#999999' } )
+-- vim.api.nvim_set_hl(0, 'TabLineSel',  { fg = '#123456', bg = '#ffffff' } )
+-- :hi TabLineFill ctermfg=LightGreen ctermbg=DarkGreen
+-- :hi TabLine ctermfg=Blue ctermbg=Yellow
+-- :hi TabLineSel ctermfg=Red ctermbg=Yellow
+
 -- [[ Configure plugins ]]
 -- NOTE: Here is where you install your plugins.
 --  You can configure plugins using the `config` key.
@@ -91,8 +69,9 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
 
-  -- Detect tabstop and shiftwidth automatically
-  'tpope/vim-sleuth',
+  -- i want tabstop / shiftwidth to always be 2
+  -- -- Detect tabstop and shiftwidth automatically
+  -- 'tpope/vim-sleuth',
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -113,9 +92,14 @@ require('lazy').setup({
     },
   },
 
-  -- devicons
   {
+    -- devicons
     'nvim-tree/nvim-web-devicons',
+  },
+
+  {
+    -- glsl highlighting
+    'tikhomirov/vim-glsl',
   },
 
   {
@@ -201,9 +185,12 @@ require('lazy').setup({
     -- toggle open/closed with ctrl-t, 
     -- autoclose=2 so dont need :FloatermKill
     -- hi FloatermBorder to color to the result of ':hi Normal'
-    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
+    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent<CR>', { silent = true }),
     -- vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
     vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
+
+    -- <C-b> -> build_editor
+    vim.keymap.set('n', '<C-b>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build_editor<CR>', { silent = true }),
   },
 
   -- {
@@ -364,9 +351,6 @@ require('lazy').setup({
       require('onedark').load()
     end,
   },
-  -- {
-  --   'rakr/vim-one'
-  -- },
 
   {
     -- Set lualine as statusline
