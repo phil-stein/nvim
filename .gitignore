@@ -4,6 +4,6 @@
 *.swo
 
 # lazy-lock
-!lazy-lock.json
+lazy-lock.json
 
 
