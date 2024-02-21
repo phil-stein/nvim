@@ -188,9 +188,20 @@ require('lazy').setup({
     vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent<CR>', { silent = true }),
     -- vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
     vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
+    vim.keymap.set('t', '<Esc>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
 
     -- <C-b> -> build_editor
     vim.keymap.set('n', '<C-b>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build_editor<CR>', { silent = true }),
+
+    -- :doc ... command
+    -- vim.api.nvim_create_user_command('Doc',
+    --   function(opts)
+    --     print(string.upper(opts.fargs[1]))
+    --     vim.cmd('<cmd>FloatermNew --name=doc --title=doc --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent<CR>')
+    --     vim.cmd(opts.fargs[1])
+    --     vim.cmd('<CR>')
+    --   end,
+    --   { nargs = 1 })
   },
 
   -- {
