@@ -2,7 +2,7 @@
 # neovim config
 
 config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) <br>
-windows: `git clone https://github.com/phil-stein/nvim %AppData%../local/nvim` <br>
+windows: `git clone https://github.com/phil-stein/nvim %appdata%\..\local\nvim` <br>
 
 ## themes
 - [onedark](https://github.com/navarasu/onedark.nvim)
