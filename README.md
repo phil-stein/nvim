@@ -32,6 +32,7 @@ windows: `git clone https://github.com/phil-stein/nvim %appdata%\..\local\nvim` 
 - indent-blankline.nvim
 - Comment.nvim
 - [vim-glsl](https://github.com/tikhomirov/vim-glsl) | glsl-highlighting
+- [hover.nvim](https://github.com/lewis6991/hover.nvim)
 
 ## commands
 - :Lazy        -> open plugin manager ui
@@ -40,28 +41,32 @@ windows: `git clone https://github.com/phil-stein/nvim %appdata%\..\local\nvim` 
 
 ## hotkeys
 - telescope
-	- ? (normal)	  -> help / key mappings
-	- <C-s>		  -> open in horizontal split
-	- <C-x>   	  -> open in vertical split
-	- <C-t>   	  -> open in tab
-	- <leader>f	  -> search files
+	- ? (normal)			-> help / key mappings
+	- <C-s>						-> open in horizontal split
+	- <C-x>						-> open in vertical split
+	- <C-t>						-> open in tab
+	- <leader>f				-> search files
 	- <leader>?       -> search recently opened
 	- <leader><space> -> search open buffers
-	- <leader>/	  -> search keyword, fuzzyfind
-	- <leader>gf	  -> search git files
-	- <C-d>		  -> file broswer
+	- <leader>/				-> search keyword, fuzzyfind
+	- <leader>gf			-> search git files
+	- <C-d>						-> file broswer
 - lsp
-	- <leader>rn	  -> rename
-	- gd		  -> goto defenition
+	- <leader>rn			-> rename
+	- gd							-> goto defenition
 	- GD              -> open defenition in vsplit
-	- gD		  -> goto declaration
-	- gI		  -> goto implementation
-	- <leader>D	  -> goto type defenition
-	- K		  -> hover documentation
+	- gD							-> goto declaration
+	- gI							-> goto implementation
+	- <leader>D				-> goto type defenition
 - float-term 
 	- <C-t>	          -> toggle terminal
 	- <C-b>						-> run build_editor
 - code-completion
-	- <CR>		  -> accept completion
-	- <Tab>		  -> cycle through completions
+	- <CR>						-> accept completion
+	- <Tab>		  			-> cycle through completions
+- hover
+	- K								-> hover documentation
+	- gK							-> hover documentation selection
+	- <C-n>						-> next
+	- <C-p>						-> previous
 

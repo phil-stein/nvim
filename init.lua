@@ -204,61 +204,48 @@ require('lazy').setup({
     --   { nargs = 1 })
   },
 
-  -- {
-  --   -- tab line 
-  --   'romgrk/barbar.nvim',
-  --   -- dependencies = {
-  --   --   'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
-  --   -- },
-  --   init = function() vim.g.barbar_auto_setup = false end,
-  --   opts = {
-  --     -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-  --     -- animation = true,        -- not sure
-  --     -- insert_at_start = true,  -- new tab at start
-  --     -- insert_at_end = false,   -- new tab at end
-  --     auto_hide = 1,  -- hide when only 1 tab
-  --     -- Enables/disable clickable tabs
-  --     --  - left-click: go to buffer
-  --     --  - middle-click: delete buffer
-  --     clickable = true,
-  --     -- A buffer to this direction will be focused (if it exists) when closing the current buffer.
-  --     -- Valid options are 'left' (the default), 'previous', and 'right'
-  --     focus_on_close = 'previous',
-  --     -- Hide inactive buffers and file extensions. options are `alternate`, `current`, `visible`, 'extensions', 'inactive'
-  --     -- hide = { inactive = true},
-  --     -- Enable/disable current/total tabpages indicator (top right corner)
-  --     tabpages = true,
-  --   },
-  -- },
-  -- {
-  --   -- tabline, tab-line, tab line
-  --   'kdheepak/tabline.nvim',
-  --   config = function()
-  --     require'tabline'.setup {
-  --       -- Defaults configuration options
-  --       enable = true,
-  --       options = {
-  --       -- If lualine is installed tabline will use separators configured in lualine by default.
-  --       -- These options can be used to override those settings.
-  --         section_separators   = {'', ''},
-  --         component_separators = {'', ''},
-  --         max_bufferline_percent = 66, -- set to nil by default, and it uses vim.o.columns * 2/3
-  --         show_tabs_always = false, -- this shows tabs only when there are more than one tab or if the first tab is named
-  --         show_devicons = true, -- this shows devicons in buffer section
-  --         show_bufnr = false, -- this appends [bufnr] to buffer section,
-  --         show_filename_only = false, -- shows base filename only instead of relative path in filename
-  --         modified_icon = "+ ", -- change the default modified icon
-  --         modified_italic = false, -- set to true by default; this determines whether the filename turns italic if modified
-  --         show_tabs_only = false, -- this shows only tabs instead of tabs + buffers
-  --       }
-  --     }
-  --     vim.cmd[[
-  --       set guioptions-=e " Use showtabline in gui vim
-  --       set sessionoptions+=tabpages,globals " store tabpages and globals in session
-  --     ]]
-  --   end,
-  --   requires = { { 'hoob3rt/lualine.nvim', opt=true }, {'kyazdani42/nvim-web-devicons', opt = true} }
-  -- },
+  {
+    "lewis6991/hover.nvim",
+    config = function()
+        require("hover").setup {
+            init = function()
+                -- Require providers
+                require("hover.providers.lsp")
+                -- require('hover.providers.gh')
+                -- require('hover.providers.gh_user')
+                -- require('hover.providers.jira')
+                -- require('hover.providers.man')
+                -- require('hover.providers.dictionary')
+            end,
+            preview_opts = {
+                -- not how highlighting works here
+                -- winhighlight = 'Normal:Normal,FloatBorder:FloatBorder',  -- highlight border
+                -- winhighlight = 'Normal:Normal,FloatBorder:Normal',  -- dont highlight border
+                border = 'rounded' -- 'single'
+            },
+            -- Whether the contents of a currently open hover window should be moved
+            -- to a :h preview-window when pressing the hover keymap.
+            preview_window = false,
+            title = true,
+            mouse_providers = {
+                'LSP'
+            },
+            mouse_delay = 1000
+        }
+
+        -- Setup keymaps
+        vim.keymap.set("n", "K",    require("hover").hover, {desc = "hover.nvim"})
+        vim.keymap.set("n", "gK",   require("hover").hover_select, {desc = "hover.nvim (select)"})
+        vim.keymap.set("n", "<C-p>", function() require("hover").hover_switch("previous") end, {desc = "hover.nvim (previous source)"})
+        vim.keymap.set("n", "<C-n>",  function() require("hover").hover_switch("next") end, {desc = "hover.nvim (next source)"})
+
+        -- doesnt work
+        -- -- Mouse support
+        -- vim.keymap.set('n', '<MouseMove>', require('hover').hover_mouse, { desc = "hover.nvim (mouse)" })
+        -- vim.o.mousemoveevent = true
+    end
+  },
+
   {
     -- vimwiki
     "vimwiki/vimwiki",
@@ -744,7 +731,8 @@ local on_attach = function(_, bufnr)
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
   -- See `:help K` for why this keymap
-  nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
+  -- done with "lewis6991/hover.nvim" now
+  -- nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
