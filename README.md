@@ -3,16 +3,21 @@
 
 config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) <br>
 
-font: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/JetBrainsMono
+font: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/JetBrainsMono <br>
 
 <img src="https://github.com/phil-stein/nvim/screenshot_01.png" alt="screenshot" width="600"> <br>
 
 ## setup
-windows: 
 ```
-cd %appdata%\..\local\nvim
-git clone https://github.com/phil-stein/nvim 
-nvim
+make backup of nvim fodler first, if already exists
+windows: 
+  >cd %appdata%\..\local\nvim
+linux:
+  cd into nvim directory
+  
+>git clone https://github.com/phil-stein/nvim 
+
+>nvim
   -> :Lazy
   -> :checkhealth
   -> :Mason
