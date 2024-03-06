@@ -5,11 +5,11 @@ config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) <br
 
 font: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/JetBrainsMono <br>
 
-<img src="https://github.com/phil-stein/nvim/screenshot_01.png" alt="screenshot" width="600"> <br>
+<img src="https://github.com/phil-stein/nvim/blob/main/screenshot_01.PNG" alt="screenshot" width="800"> <br>
 
 ## setup
 ```
-make backup of nvim fodler first, if already exists
+make backup of nvim folder first, if already exists
 windows: 
   >cd %appdata%\..\local\nvim
 linux:
