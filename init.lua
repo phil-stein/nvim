@@ -7,6 +7,8 @@
 -- '', '', '', '' -> seperators
 -- ─│─│╭╮╯╰           -> rounded window corners
 -- ─│─│┌┐┘└           -> window corners
+-- ✗, ➜, ✓, ◍         -> useful random nerdfont chars
+-- "", "", "" "", "", "", "", "", "", "", "", "" -> dapui chars
 
 
 -- Set <space> as the leader key
@@ -204,9 +206,20 @@ require('lazy').setup({
     --   { nargs = 1 })
   },
 
-  {
+  { -- hover / K documentation popup
     "lewis6991/hover.nvim",
     config = function()
+        -- require('hover').register() {
+        --   priority = 150,
+        --   name = 'doc',
+        --   enabled = function(bufnr)
+        --     return true
+        --   end,
+        --   execute = function(opts, done)
+        --     -- done{lines={'TEST'}, filetype="markdown"}
+        --     done{filetype="c"}
+        -- end,
+        -- }
         require("hover").setup {
             init = function()
                 -- Require providers
@@ -216,6 +229,7 @@ require('lazy').setup({
                 -- require('hover.providers.jira')
                 -- require('hover.providers.man')
                 -- require('hover.providers.dictionary')
+                -- require('hover.providers.doc')
             end,
             preview_opts = {
                 -- not how highlighting works here
@@ -258,6 +272,94 @@ require('lazy').setup({
             },
         }
     end,
+  },
+
+  { -- dap -> debug adapter protocol, debugging using gdb in nvim
+          -- added myself, dap debugging
+    'mfussenegger/nvim-dap',
+    "jay-babu/mason-nvim-dap.nvim",
+    'rcarriga/nvim-dap-ui',
+    -- require('dapui').setup() {
+    --   controls = {
+    --     element = "repl",
+    --     enabled = true,
+    --     icons = {
+    --       disconnect = "",
+    --       pause = "",
+    --       play = "",
+    --       run_last = "",
+    --       step_back = "",
+    --       step_into = "",
+    --       step_out = "",
+    --       step_over = "",
+    --       terminate = ""
+    --     }
+    --   },
+    --   element_mappings = {},
+    --   expand_lines = true,
+    --   floating = {
+    --     border = "single",
+    --     mappings = {
+    --       close = { "q", "<Esc>" }
+    --     }
+    --   },
+    --   force_buffers = true,
+    --   icons = {
+    --     collapsed = "",
+    --     current_frame = "",
+    --     expanded = ""
+    --   },
+    --   layouts = { {
+    --       elements = { {
+    --           id = "scopes",
+    --           size = 0.25
+    --         }, {
+    --           id = "breakpoints",
+    --           size = 0.25
+    --         }, {
+    --           id = "stacks",
+    --           size = 0.25
+    --         }, {
+    --           id = "watches",
+    --           size = 0.25
+    --         } },
+    --       position = "left",
+    --       size = 40
+    --     }, {
+    --       elements = { {
+    --           id = "repl",
+    --           size = 0.5
+    --         }, {
+    --           id = "console",
+    --           size = 0.5
+    --         } },
+    --       position = "bottom",
+    --       size = 10
+    --     } },
+    --   mappings = {
+    --     edit = "e",
+    --     expand = { "<CR>", "<2-LeftMouse>" },
+    --     open = "o",
+    --     remove = "d",
+    --     repl = "r",
+    --     toggle = "t"
+    --   },
+    --   render = {
+    --     indent = 1,
+    --     max_value_lines = 100
+    --   }
+    -- },
+    -- dap / debugging keymap
+    vim.keymap.set('n', '<F5>',  function() require('dap').continue()  end, { desc = 'F5  -> run debuggger'}),
+    vim.keymap.set('n', '<F9>',  function() require('dap').step_into() end, { desc = 'F9  -> step into'}),
+    vim.keymap.set('n', '<F10>', function() require('dap').step_over() end, { desc = 'F10 -> step over'}),
+    vim.keymap.set('n', '<F12>', function() require('dap').step_out()  end, { desc = 'F12 -> step out'}),
+
+    vim.keymap.set('n', '<leader>b',  function() require('dap').toggle_breakpoint() end, { desc = 'leader b  -> toggle breakpoint'}),
+    vim.keymap.set('n', '<leader>dr', function() require('dap').repl.open()         end, { desc = 'leader dr -> open repl'}),
+
+    -- vim.keymap.set('n', '<leader>d',  function() require('dapui').open()            end, { desc = 'leader d  -> open debug ui'})
+    vim.keymap.set('n', '<leader>d',  ":lua require('dapui').open()<CR>" , {  silent = true, desc = 'leader d  -> open debug ui, opens automatically'})
   },
 
   -- Useful plugin to show you pending keybinds.
@@ -454,7 +556,7 @@ require('lazy').setup({
 -- NOTE: You can change these options as you wish!
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 
 -- Make line numbers default
 vim.wo.number = true
@@ -771,6 +873,83 @@ require('which-key').register({
 -- before setting up the servers.
 require('mason').setup()
 require('mason-lspconfig').setup()
+require("mason-nvim-dap").setup({ ensure_installed = { "cppdbg" } })
+require("dapui").setup()
+
+-- dap-config, debug adapter config
+-- open/close dap-ui automatically
+local dap, dapui = require("dap"), require("dapui")
+dap.listeners.before.attach.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+  dapui.close()
+end
+-- setup dap adapters
+dap.adapters.cppdbg = {
+    id = 'cppdbg',
+    type = 'executable',
+    -- command = 'C:\\#terminal_extensions\\cpptools-win64\\debugAdapters\\bin\\OpenDebugAD7.exe',
+	  command = vim.fn.exepath('OpenDebugAD7'),
+    options = {
+    detached = false
+  },
+}
+-- setup dap languages
+dap.configurations.c = {
+  {
+    name = "Launch file",
+    type = "cppdbg",
+    request = "launch",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '\\', 'file')
+    end,
+    cwd = '${workspaceFolder}',
+    stopAtEntry = false,
+  },
+  -- {
+  --   name = 'Attach to gdbserver :1234',
+  --   type = 'cppdbg',
+  --   request = 'launch',
+  --   MIMode = 'gdb',
+  --   miDebuggerServerAddress = 'localhost:1234',
+  --   miDebuggerPath = '/usr/bin/gdb',
+  --   cwd = '${workspaceFolder}',
+  --   program = function()
+  --     return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+  --   end,
+  -- },
+}
+-- dap.configurations.cpp = {
+--   {
+--     name = "Launch file",
+--     type = "cppdbg",
+--     request = "launch",
+--     program = function()
+--       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+--     end,
+--     cwd = '${workspaceFolder}',
+--     stopAtEntry = true,
+--   },
+--   {
+--     name = 'Attach to gdbserver :1234',
+--     type = 'cppdbg',
+--     request = 'launch',
+--     MIMode = 'gdb',
+--     miDebuggerServerAddress = 'localhost:1234',
+--     miDebuggerPath = '/usr/bin/gdb',
+--     cwd = '${workspaceFolder}',
+--     program = function()
+--       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+--     end,
+--   },
+-- }
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.

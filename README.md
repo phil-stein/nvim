@@ -2,7 +2,23 @@
 # neovim config
 
 config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) <br>
-windows: `git clone https://github.com/phil-stein/nvim %appdata%\..\local\nvim` <br>
+
+font: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/JetBrainsMono
+
+<img src="https://github.com/phil-stein/nvim/screenshot_01.png" alt="screenshot" width="600"> <br>
+
+## setup
+windows: 
+```
+cd %appdata%\..\local\nvim
+git clone https://github.com/phil-stein/nvim 
+nvim
+  -> :Lazy
+  -> :checkhealth
+  -> :Mason
+    -> (2)LSP -> clangd   press i
+    -> (3)DAP -> cpptools press i
+```
 
 ## themes
 - [onedark](https://github.com/navarasu/onedark.nvim)
@@ -11,6 +27,9 @@ windows: `git clone https://github.com/phil-stein/nvim %appdata%\..\local\nvim` 
 - [lazy.nvim](https://github.com/folke/lazy.nvim) | plug-in manager
 - [mason](https://github.com/williamboman/mason.nvim) | lsp-, linter-manager
 	- [mason-lsp-config](https://github.com/williamboman/mason-lspconfig.nvim) | lsp configs for mason
+  - [mason-nvim-dap](https://github.com/jay-babu/mason-nvim-dap.nvim) | dap adapters for mason
+- [nvim-dap](https://github.com/mfussenegger/nvim-dap) | dap, debuggger
+  - [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui) | ui interface for dap debugging
 - [telescope](https://github.com/nvim-telescope/telescope.nvim) | file-navigation
 	- ripgrep
 	- plenary
@@ -28,16 +47,23 @@ windows: `git clone https://github.com/phil-stein/nvim %appdata%\..\local\nvim` 
 - _disabled_ [barbar.nvim](https://github.com/romgrk/barbar.nvim) | tab-line
 - _disabled_ [tabline.nvim](https://github.com/kdheepak/tabline.nvim) | tab-line
 - [which-key.nvim](https://github.com/folke/which-key.nvim) | show keymaps while typing them
-- gitsigns
+- git stuff
+  - gitsigns
+  - 'tpope/vim-fugitive',
+  - 'tpope/vim-rhubarb'
+- 'j-hui/fidget.nvim' | lsp status updates
+- 'folke/neodev.nvim' 
 - indent-blankline.nvim
 - Comment.nvim
 - [vim-glsl](https://github.com/tikhomirov/vim-glsl) | glsl-highlighting
 - [hover.nvim](https://github.com/lewis6991/hover.nvim)
 
 ## commands
-- :Lazy        -> open plugin manager ui
-- :Mason       -> open mason ui
-- :checkhealth -> check plug-in errors & warnings
+- :Lazy             -> open plugin manager ui
+- :Mason            -> open mason ui
+- :checkhealth      -> check plug-in errors & warnings
+- :LspInfo          -> info about current lsp, including id
+- :LspRestart [id]  -> restart lsp, can give id
 
 ## hotkeys
 - telescope
@@ -69,4 +95,12 @@ windows: `git clone https://github.com/phil-stein/nvim %appdata%\..\local\nvim` 
 	- gK							-> hover documentation selection
 	- <C-n>						-> next
 	- <C-p>						-> previous
+- dap | debugging
+  - <F5>            -> run debuggger
+  - <F9>            -> step into
+  - <F10>           -> step over
+  - <F12>           -> step out
+  - <leader>b       -> toggle breakpoint,
+  - <leader>dr      -> open repl,
+  - <leader>d       -> open debug ui, opens automatically
 
