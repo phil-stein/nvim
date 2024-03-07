@@ -9,7 +9,9 @@
 -- ─│─│┌┐┘└           -> window corners
 -- ✗, ➜, ✓, ◍         -> useful random nerdfont chars
 -- "", "", "" "", "", "", "", "", "", "", "", "" -> dapui chars
-
+-- '🛑', "", "", "",
+--  "✹", "✚", "✭", "➜", "═", "✖", "✗", "✔", '☒',
+-- :NvimWebDeviconsHiTest -> shows all registered icons
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -46,6 +48,14 @@ vim.opt.rtp:prepend(lazypath)
   vim.keymap.set('n', '_', ':vertical resize -10<CR>')
   vim.keymap.set('n', ',', ':resize +4<CR>')
   vim.keymap.set('n', ';', ':resize -4<CR>')
+  -- remap q: to not show command history, as thats annoying
+  -- exiting with q and then : to start command opens this
+  vim.keymap.set('',  'q:', '')
+  vim.keymap.set('i', 'q:', '')
+  vim.keymap.set('n', 'q:', '')
+  vim.keymap.set('v', 'q:', '')
+  vim.keymap.set('x', 'q:', '')
+  vim.keymap.set('t', 'q:', '')
 
 -- doent work
 -- -- tabline tab tabs tab-highlights
@@ -97,6 +107,9 @@ require('lazy').setup({
   {
     -- devicons
     'nvim-tree/nvim-web-devicons',
+    config = function()
+      require('nvim-web-devicons').setup()
+    end
   },
 
   {
@@ -188,12 +201,12 @@ require('lazy').setup({
     -- autoclose=2 so dont need :FloatermKill
     -- hi FloatermBorder to color to the result of ':hi Normal'
     vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent<CR>', { silent = true }),
-    -- vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰<CR>', { silent = true }),
     vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
     vim.keymap.set('t', '<Esc>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
 
     -- <C-b> -> build_editor
-    vim.keymap.set('n', '<C-b>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build_editor<CR>', { silent = true }),
+    vim.keymap.set('n', '<C-b>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build<CR>', { silent = true, desc = "call build batch/bash file"}),
+    -- vim.keymap.set('n', '<C-B>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build - <CR>', { silent = true , desc = "call build batch/bash file"}),
 
     -- :doc ... command
     -- vim.api.nvim_create_user_command('Doc',
@@ -279,76 +292,78 @@ require('lazy').setup({
     'mfussenegger/nvim-dap',
     "jay-babu/mason-nvim-dap.nvim",
     'rcarriga/nvim-dap-ui',
-    -- require('dapui').setup() {
-    --   controls = {
-    --     element = "repl",
-    --     enabled = true,
-    --     icons = {
-    --       disconnect = "",
-    --       pause = "",
-    --       play = "",
-    --       run_last = "",
-    --       step_back = "",
-    --       step_into = "",
-    --       step_out = "",
-    --       step_over = "",
-    --       terminate = ""
-    --     }
-    --   },
-    --   element_mappings = {},
-    --   expand_lines = true,
-    --   floating = {
-    --     border = "single",
-    --     mappings = {
-    --       close = { "q", "<Esc>" }
-    --     }
-    --   },
-    --   force_buffers = true,
-    --   icons = {
-    --     collapsed = "",
-    --     current_frame = "",
-    --     expanded = ""
-    --   },
-    --   layouts = { {
-    --       elements = { {
-    --           id = "scopes",
-    --           size = 0.25
-    --         }, {
-    --           id = "breakpoints",
-    --           size = 0.25
-    --         }, {
-    --           id = "stacks",
-    --           size = 0.25
-    --         }, {
-    --           id = "watches",
-    --           size = 0.25
-    --         } },
-    --       position = "left",
-    --       size = 40
-    --     }, {
-    --       elements = { {
-    --           id = "repl",
-    --           size = 0.5
-    --         }, {
-    --           id = "console",
-    --           size = 0.5
-    --         } },
-    --       position = "bottom",
-    --       size = 10
-    --     } },
-    --   mappings = {
-    --     edit = "e",
-    --     expand = { "<CR>", "<2-LeftMouse>" },
-    --     open = "o",
-    --     remove = "d",
-    --     repl = "r",
-    --     toggle = "t"
-    --   },
-    --   render = {
-    --     indent = 1,
-    --     max_value_lines = 100
-    --   }
-    -- },
+    config = function()
+      require('dapui').setup() {
+        controls = {
+          element = "repl",
+          enabled = true,
+          icons = {
+            disconnect = "",
+            pause = "",
+            play = "",
+            run_last = "",
+            step_back = "",
+            step_into = "",
+            step_out = "",
+            step_over = "",
+            terminate = ""
+          }
+        },
+        element_mappings = {},
+        expand_lines = true,
+        floating = {
+          border = "single",
+          mappings = {
+            close = { "q", "<Esc>" }
+          }
+        },
+        force_buffers = true,
+        icons = {
+          collapsed = "",
+          current_frame = "",
+          expanded = ""
+        },
+        layouts = { {
+            elements = { {
+                id = "scopes",
+                size = 0.25
+              }, {
+                id = "breakpoints",
+                size = 0.25
+              }, {
+                id = "stacks",
+                size = 0.25
+              }, {
+                id = "watches",
+                size = 0.25
+              } },
+            position = "left",
+            size = 40
+          }, {
+            elements = { {
+                id = "repl",
+                size = 0.5
+              }, {
+                id = "console",
+                size = 0.5
+              } },
+            position = "bottom",
+            size = 10
+          } },
+        mappings = {
+          edit = "e",
+          expand = { "<CR>", "<2-LeftMouse>" },
+          open = "o",
+          remove = "d",
+          repl = "r",
+          toggle = "t"
+        },
+        render = {
+          indent = 1,
+          max_value_lines = 100
+        }
+      }
+    end,
     -- dap / debugging keymap
     vim.keymap.set('n', '<F5>',  function() require('dap').continue()  end, { desc = 'F5  -> run debuggger'}),
     vim.keymap.set('n', '<F9>',  function() require('dap').step_into() end, { desc = 'F9  -> step into'}),
@@ -359,9 +374,88 @@ require('lazy').setup({
     vim.keymap.set('n', '<leader>dr', function() require('dap').repl.open()         end, { desc = 'leader dr -> open repl'}),
 
     -- vim.keymap.set('n', '<leader>d',  function() require('dapui').open()            end, { desc = 'leader d  -> open debug ui'})
-    vim.keymap.set('n', '<leader>d',  ":lua require('dapui').open()<CR>" , {  silent = true, desc = 'leader d  -> open debug ui, opens automatically'})
+    -- vim.keymap.set('n', '<leader>d',  ":lua require('dapui').open()<CR>" , {  silent = true, desc = 'leader d  -> open debug ui, opens automatically'})
+    vim.keymap.set('n', '<leader>d',  function() require('dapui').toggle() end, {  silent = true, desc = 'leader d  -> toggle debug ui, does this automatically'})
   },
 
+  { -- doc | DOC, custom hotkey usinf nui.nvim
+    -- :Doc command
+    -- vim.api.nvim_buf_create_user_command(0, 'Doc',
+    vim.api.nvim_create_user_command('Doc',
+      function(opts)
+        local Popup = require("nui.popup")
+        local popup = Popup({
+          position = "50%",
+          size = {
+            width  = 0.4,
+            height = 0.65,
+          },
+          enter = true,
+          focusable = true,
+          zindex = 50,
+          relative = "editor",
+          border = {
+            padding = {
+              top = 2,
+              bottom = 2,
+              left = 3,
+              right = 3,
+            },
+            style = "rounded",
+            text = {
+              top = " doc: "..opts.fargs[1].." ",
+              top_align = "center",
+              -- bottom = "I am bottom title",
+              -- bottom_align = "left",
+            },
+          },
+          buf_options = {
+            modifiable = false,
+            readonly = true,
+          },
+          win_options = {
+            -- winblend = 10,
+            -- winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
+            winhighlight = "Normal:Normal,FloatBorder:Normal",
+          },
+        })
+        -- popup:mount()
+        popup:show()
+
+        -- close popup when leaving it
+        local event = require("nui.utils.autocmd").event
+        popup:on({ event.BufLeave, event.BufDelete, event.BufHidden },
+          function()
+            popup:unmount()
+          end, { once = true })
+        -- quit with esc or q
+        popup:map("t", "<esc>", function() vim.cmd('q!') popup:unmount() end)
+        popup:map("t", "q",     function() vim.cmd('q!') popup:unmount() end)
+        -- vim.cmd('!doc malloc');
+        -- vim.fn.jobstart({'doc', '-c', opts.fargs[1] },
+        -- {
+        --   pty = true,
+        --   width = _width,
+        --   -- cwd = '${workspaceFolder}',
+        --   -- stdout_buffered = true,
+        --   --on_exit = some_function,
+        --   --on_stdout = some_other_function,
+        --   --on_stderr = some_third_function
+        --   on_stdout = function(_, data)
+        --       if data then
+        --         print(data)
+        --         vim.api.nvim_buf_set_lines(popup.bufnr, -1, -1, false, data)
+        --       end
+        --     end
+        -- })
+        -- nvim_open_term(popup.bufnr)
+        -- termopen("doc malloc" [, {opts}])
+        vim.cmd('term doc '..opts.fargs[1])
+        vim.cmd('startinsert')
+      end,
+      {  nargs = 1, desc = ''}),
+    -- end doc cmd
+  },
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
   {
@@ -876,7 +970,9 @@ require('mason-lspconfig').setup()
 require("mason-nvim-dap").setup({ ensure_installed = { "cppdbg" } })
 require("dapui").setup()
 
--- dap-config, debug adapter config
+-- [[dap-config]] debug adapter config
+-- set breakpoint char, see :h dap.txt -> SIGNS CONFIGURATION
+vim.fn.sign_define('DapBreakpoint', {text='🛑', texthl='', linehl='', numhl=''})
 -- open/close dap-ui automatically
 local dap, dapui = require("dap"), require("dapui")
 dap.listeners.before.attach.dapui_config = function()
@@ -893,11 +989,11 @@ dap.listeners.before.event_exited.dapui_config = function()
 end
 -- setup dap adapters
 dap.adapters.cppdbg = {
-    id = 'cppdbg',
-    type = 'executable',
-    -- command = 'C:\\#terminal_extensions\\cpptools-win64\\debugAdapters\\bin\\OpenDebugAD7.exe',
-	  command = vim.fn.exepath('OpenDebugAD7'),
-    options = {
+  id = 'cppdbg',
+  type = 'executable',
+  -- command = 'C:\\#terminal_extensions\\cpptools-win64\\debugAdapters\\bin\\OpenDebugAD7.exe',
+	command = vim.fn.exepath('OpenDebugAD7'),
+  options = {
     detached = false
   },
 }
@@ -908,7 +1004,26 @@ dap.configurations.c = {
     type = "cppdbg",
     request = "launch",
     program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '\\', 'file')
+      -- trying to run build before debug, not working
+      -- os.execute('build')
+      -- os.execute('${workspaceFolder}\\build.bat')
+      -- os.execute('${workspaceFolder}'..'\\build.bat')
+      --
+      -- local handle = io.popen("build")
+      -- local result = handle:read("*a")
+      -- handle:close()
+      -- print(result)
+      --
+      -- vim.cmd('split | term build')
+      --
+      -- vim.fn.jobstart('build',
+      -- {
+      --   cwd = '${workspaceFolder}',
+      --   --on_exit = some_function,
+      --   --on_stdout = some_other_function,
+      --   --on_stderr = some_third_function
+      -- })
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '\\_bin\\editor', 'file')
     end,
     cwd = '${workspaceFolder}',
     stopAtEntry = false,

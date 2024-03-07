@@ -44,7 +44,7 @@ linux:
 - [devicons](https://github.com/ryanoasis/vim-devicons) | use nerd-fonts for icons
 - [lualine](https://github.com/nvim-lualine/lualine.nvim) | better commandline, tab-line
 - [fine-cmdline](https://github.com/VonHeikemen/fine-cmdline.nvim) | floating commandline
-	- [nui](https://github.com/MunifTanjim/nui.nvim/tree/main) | ui-library, required by fine-cmdline
+	- [nui.nvim](https://github.com/MunifTanjim/nui.nvim/tree/main) | ui-library, required by fine-cmdline
 - [vim-floatterm](https://github.com/voldikss/vim-floaterm) | floating terminal
 - [vimwiki](https://github.com/vimwiki/vimwiki) | notes, etc.
 - [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | code-completion
@@ -69,6 +69,7 @@ linux:
 - :checkhealth      -> check plug-in errors & warnings
 - :LspInfo          -> info about current lsp, including id
 - :LspRestart [id]  -> restart lsp, can give id
+- :Doc ...          -> open floating window with [term_docs]() documentation
 
 ## hotkeys
 - telescope
@@ -91,7 +92,8 @@ linux:
 	- <leader>D				-> goto type defenition
 - float-term 
 	- <C-t>	          -> toggle terminal
-	- <C-b>						-> run build_editor
+	- <C-b>						-> run build   | for running build batch / bash / powershell file
+	- _disabled_ <C-B>						-> run build - | can check in batch file for arg and build different proj
 - code-completion
 	- <CR>						-> accept completion
 	- <Tab>		  			-> cycle through completions
