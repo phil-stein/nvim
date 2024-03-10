@@ -128,10 +128,11 @@ require('lazy').setup({
           -- Build Step is needed for regex support in snippets
           -- This step is not supported in many windows environments
           -- Remove the below condition to re-enable on windows
-          if vim.fn.has 'win32' == 1 then
-            return
-          end
-          return 'make install_jsregexp'
+
+          -- if vim.fn.has 'win32' == 1 then
+          --   return
+          -- end
+          -- return 'make install_jsregexp'
         end)(),
       },
       'saadparwaiz1/cmp_luasnip',
@@ -140,8 +141,8 @@ require('lazy').setup({
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
 
-      -- Adds a number of user-friendly snippets
-      'rafamadriz/friendly-snippets',
+      -- -- Adds a number of user-friendly snippets
+      -- 'rafamadriz/friendly-snippets',
     },
   },
 
@@ -208,15 +209,9 @@ require('lazy').setup({
     vim.keymap.set('n', '<C-b>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build<CR>', { silent = true, desc = "call build batch/bash file"}),
     -- vim.keymap.set('n', '<C-B>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build - <CR>', { silent = true , desc = "call build batch/bash file"}),
 
-    -- :doc ... command
-    -- vim.api.nvim_create_user_command('Doc',
-    --   function(opts)
-    --     print(string.upper(opts.fargs[1]))
-    --     vim.cmd('<cmd>FloatermNew --name=doc --title=doc --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent<CR>')
-    --     vim.cmd(opts.fargs[1])
-    --     vim.cmd('<CR>')
-    --   end,
-    --   { nargs = 1 })
+    -- terminal = require('terminal'),
+    -- vim.keymap.set('n', '<F2>', function() require('terminal').toggle_terminal() end, { desc = "123" }),
+    -- vim.keymap.set('n', '<F2>', function() require('terminal').test() end, { desc = "123" }),
   },
 
   { -- hover / K documentation popup
@@ -369,18 +364,32 @@ require('lazy').setup({
     vim.keymap.set('n', '<F9>',  function() require('dap').step_into() end, { desc = 'F9  -> step into'}),
     vim.keymap.set('n', '<F10>', function() require('dap').step_over() end, { desc = 'F10 -> step over'}),
     vim.keymap.set('n', '<F12>', function() require('dap').step_out()  end, { desc = 'F12 -> step out'}),
+    vim.keymap.set('n', '<F4>',  function() require('dap').close() require('dapui').close() end,
+                                 { desc = 'F4 -> close dap'}),
 
     vim.keymap.set('n', '<leader>b',  function() require('dap').toggle_breakpoint() end, { desc = 'leader b  -> toggle breakpoint'}),
     vim.keymap.set('n', '<leader>dr', function() require('dap').repl.open()         end, { desc = 'leader dr -> open repl'}),
 
     -- vim.keymap.set('n', '<leader>d',  function() require('dapui').open()            end, { desc = 'leader d  -> open debug ui'})
     -- vim.keymap.set('n', '<leader>d',  ":lua require('dapui').open()<CR>" , {  silent = true, desc = 'leader d  -> open debug ui, opens automatically'})
-    vim.keymap.set('n', '<leader>d',  function() require('dapui').toggle() end, {  silent = true, desc = 'leader d  -> toggle debug ui, does this automatically'})
+    vim.keymap.set('n', '<leader>d',  function() require('dapui').toggle() end, {  silent = true, desc = 'leader d  -> toggle debug ui, does this automatically'}),
+
+    -- doesnt work
+    -- { -- dap virtual text, show variable values 
+    --   'theHamsta/nvim-dap-virtual-text',
+    --   config = function()
+    --     require("nvim-dap-virtual-text").setup() {
+    --         all_frames = true,
+    --         virt_text_pos = 'inline',
+    --       }
+    --   end
+    -- },
   },
 
   { -- doc | DOC, custom hotkey usinf nui.nvim
     -- :Doc command
     -- vim.api.nvim_buf_create_user_command(0, 'Doc',
+    -- dependencies = { 'MunifTanjim/nui.nvim' },
     vim.api.nvim_create_user_command('Doc',
       function(opts)
         local Popup = require("nui.popup")
@@ -455,6 +464,15 @@ require('lazy').setup({
       end,
       {  nargs = 1, desc = ''}),
     -- end doc cmd
+    vim.keymap.set('n', '<C-h>', ':Doc neovim-mappings<CR>', { silent = true, desc = "show neovim mappings"}),
+    -- vim.keymap.set('n', '<F1>', ':Doc expand("<cword>")<CR>', { desc = "show :Doc for word under cursor"}),
+    -- vim.keymap.set('n', '<F1>',
+    --   function()
+    --     local cword = vim.fn.expand("<cword>")
+    --     -- vim.cmd(':Doc '..vim.fn.expand("<cword>")..'<CR>')
+    --     vim.cmd(':echo '..cword..'<CR>')
+    --   end, { desc = "show :Doc for word under cursor"}),
+    -- vim.keymap.set('n', '<F1>', ':echo expand("<cword>")<CR>', { desc = "show :Doc for word under cursor"}),
   },
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
@@ -532,18 +550,108 @@ require('lazy').setup({
     },
   },
 
+  -- [[colorscheme]] -> colors, themes
+  -- {
+  --   -- Theme inspired by Atom
+  --   'navarasu/onedark.nvim',
+  --   priority = 1000,
+  --   lazy = false,
+  --   config = function()
+  --     require('onedark').setup {
+  --       -- Set a style preset. 'dark' is default.
+  --       style = 'dark', -- dark, darker, cool, deep, warm, warmer, light
+  --     }
+  --     require('onedark').load()
+  --   end,
+  -- },
+  -- {
+  --   'shaunsingh/nord.nvim',
+  --   priority = 1000,
+  --   lazy = false,
+  --   config = function()
+  --     -- Example config in lua
+  --     vim.g.nord_contrast = true
+  --     vim.g.nord_borders = true
+  --     vim.g.nord_cursorline_transparent = false
+  --     vim.g.nord_disable_background = false
+  --     vim.g.nord_italic = true
+  --     vim.g.nord_uniform_diff_background = true
+  --     vim.g.nord_bold = true
+  --     -- Load the colorscheme
+  --     require('nord').set()
+  --   end,
+  -- },
   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
+    "catppuccin/nvim",
+    name = "catppuccin",
     priority = 1000,
-    lazy = false,
     config = function()
-      require('onedark').setup {
-        -- Set a style preset. 'dark' is default.
-        style = 'dark', -- dark, darker, cool, deep, warm, warmer, light
+      require("catppuccin").setup {
+        flavour = "frappe", -- latte, frappe, macchiato, mocha
+        dim_inactive = {
+          enabled = true, -- dims the background color of inactive window
+          shade = "dark",
+          percentage = 0.1, -- percentage of the shade to apply to the inactive window
+        },
+        no_italic = false, no_bold = false, no_underline = false,
+        styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
+            comments = { "italic" }, -- Change the style of comments
+            conditionals = { },
+            loops = {},
+            functions = {},
+            keywords = {},
+            strings = {},
+            variables = {},
+            numbers = {},
+            booleans = {},
+            properties = {},
+            types = {},
+            operators = {},
+            -- miscs = {}, -- Uncomment to turn off hard-coded styles
+        },
+        integrations = {
+          cmp = true,
+          gitsigns = true,
+          treesitter = true,
+          notify = false,
+          mason = true,
+          dap = true,
+          dap_ui = true,
+          native_lsp = {
+            enabled = true,
+            virtual_text = {
+                errors = { "bold" },
+                hints = { "italic" },
+                warnings = { },
+                information = { },
+            },
+            underlines = {
+                errors = { "underline" },
+                hints = { "underline" },
+                warnings = { "underline" },
+                information = { "underline" },
+            },
+            inlay_hints = {
+                background = true,
+            },
+          },
+          telescope = {
+            enabled = true,
+            -- style = "nvchad"
+            },
+          vimwiki = true,
+          which_key = true,
+        }
       }
-      require('onedark').load()
+      vim.cmd.colorscheme "catppuccin"
     end,
+  },
+
+  { -- change line number to reflect current mode
+    'mawkler/modicator.nvim',
+    config = function()
+      require('modicator').setup()
+    end
   },
 
   {
@@ -629,6 +737,17 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
+  
+  { -- show diagnostics in list, i.e. warnings, errors, hints
+   "folke/trouble.nvim",
+   dependencies = { "nvim-tree/nvim-web-devicons" },
+   opts = {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+   },
+  }
+
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -645,6 +764,8 @@ require('lazy').setup({
   -- { import = 'custom.plugins' },
 }, {})
 
+
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
@@ -654,6 +775,33 @@ vim.o.hlsearch = true
 
 -- Make line numbers default
 vim.wo.number = true
+
+-- highlight cursor line 
+vim.wo.cursorline = true
+-- was trying to change cursor line by mode
+-- -- vim.api.nvim_create_autocmd("InsertEnter", { callback =
+-- vim.api.nvim_create_autocmd("ModeChanged", { callback =
+--   function()
+--     local m = vim.api.nvim_get_mode()
+--     if m.blocking then
+--       return
+--     end
+-- 
+--     vim.cmd("hi CursorLine guibg=#3b3f52")
+--     if m.mode == 'i' then
+--       vim.cmd("hi CursorLine guibg='DarkGray'")
+--     end
+--     if m.mode == 'v' then
+--       vim.cmd("hi CursorLine guibg='LightYellow'")
+--     end
+--     if m.mode == 'r' then
+--       vim.cmd("hi CursorLine guibg='LightRed'")
+--     end
+--     if m.mode == 'n' then
+--       vim.cmd("hi CursorLine guibg=#3b3f52")
+--     end
+--   end
+-- })
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -697,10 +845,11 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+-- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+-- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+vim.keymap.set('n', '<leader>q',  function() require("trouble").toggle() end, { desc = 'Open diagnostics list' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -1097,7 +1246,9 @@ require('neodev').setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = false; -- disable lsp snippets
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+capabilities.textDocument.completion.completionItem.snippetSupport = false; -- disable lsp snippets
 
 -- Ensure the servers above are installed
 local mason_lspconfig = require 'mason-lspconfig'
@@ -1153,31 +1304,38 @@ cmp.setup {
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     -- ['<C-Space>'] = cmp.mapping.complete {},
     -- ['<C-CR>'] = cmp.mapping.complete {},
-    ['<CR>'] = cmp.mapping.confirm {
+    -- ['<CR>'] = cmp.mapping.confirm {
+    ['<S-Tab>'] = cmp.mapping.confirm {
       -- behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_locally_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.locally_jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
+    -- ['<Tab>'] = cmp.mapping(function(fallback)
+    --   if cmp.visible() then
+    --     cmp.select_next_item()
+    --   -- elseif luasnip.expand_or_locally_jumpable() then
+    --   --   luasnip.expand_or_jump()
+    --   else
+    --     fallback()
+    --   end
+    -- end, { 'i', 's' }),
+    -- ['<S-Tab>'] = cmp.mapping(function(fallback)
+    --   if cmp.visible() then
+    --     cmp.select_prev_item()
+    --   -- elseif luasnip.locally_jumpable(-1) then
+    --   --   luasnip.jump(-1)
+    --   else
+    --     fallback()
+    --   end
+    -- end, { 'i', 's' }),
   },
   sources = {
-    { name = 'nvim_lsp' },
+    -- { name = 'nvim_lsp' },
+    { -- disable lsp snippets
+        name = "nvim_lsp",
+        entry_filter = function(entry)
+            return require("cmp").lsp.CompletionItemKind.Snippet ~= entry:get_kind()
+        end
+    },
     -- { name = 'luasnip' },
     { name = 'path' },
   },

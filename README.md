@@ -26,7 +26,8 @@ linux:
 ```
 
 ## themes
-- [onedark](https://github.com/navarasu/onedark.nvim)
+- _deactivated_ [onedark](https://github.com/navarasu/onedark.nvim)
+- [catpuccin](https://github.com/catppuccin/nvim)
 
 ## plug-ins
 - [lazy.nvim](https://github.com/folke/lazy.nvim) | plug-in manager
@@ -48,7 +49,7 @@ linux:
 - [vim-floatterm](https://github.com/voldikss/vim-floaterm) | floating terminal
 - [vimwiki](https://github.com/vimwiki/vimwiki) | notes, etc.
 - [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | code-completion
-	- _disabled_ luasnip | snippets
+	- luasnip | snippets
 - _disabled_ [barbar.nvim](https://github.com/romgrk/barbar.nvim) | tab-line
 - _disabled_ [tabline.nvim](https://github.com/kdheepak/tabline.nvim) | tab-line
 - [which-key.nvim](https://github.com/folke/which-key.nvim) | show keymaps while typing them
@@ -56,12 +57,14 @@ linux:
   - gitsigns
   - 'tpope/vim-fugitive',
   - 'tpope/vim-rhubarb'
-- 'j-hui/fidget.nvim' | lsp status updates
-- 'folke/neodev.nvim' 
-- indent-blankline.nvim
-- Comment.nvim
+- [fidget.nvim](https://github.com/j-hui/fidget.nvim) | lsp status updates
+- [neodev.nvim](https://github.com/folke/neodev.nvim) | init.lua and plug-in dev helper
+- [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim)
+- [Comment.nvim](https://github.com/numToStr/Comment.nvim) | hotkeys for commenting
 - [vim-glsl](https://github.com/tikhomirov/vim-glsl) | glsl-highlighting
-- [hover.nvim](https://github.com/lewis6991/hover.nvim)
+- [hover.nvim](https://github.com/lewis6991/hover.nvim) | better 'K' documentation
+- [modicator.nvim](https://github.com/mawkler/modicator.nvim) | hange line number to reflect current mode
+- [trouble.nvim](https://github.com/folke/trouble.nvim) | show diagnostics list
 
 ## commands
 - :Lazy             -> open plugin manager ui
@@ -90,6 +93,8 @@ linux:
 	- gD							-> goto declaration
 	- gI							-> goto implementation
 	- <leader>D				-> goto type defenition
+  - <leader>e       -> show diagnostic message
+  - <leader>q       -> show diagnostic message list
 - float-term 
 	- <C-t>	          -> toggle terminal
 	- <C-b>						-> run build   | for running build batch / bash / powershell file
@@ -110,4 +115,9 @@ linux:
   - <leader>b       -> toggle breakpoint,
   - <leader>dr      -> open repl,
   - <leader>d       -> open debug ui, opens automatically
+- comment
+  - gcc             -> line toggle comment
+  - gbc             -> line toggle multiline-comment
+  - gc in visual m. -> tine toggle comment
+  - gb in visual m. -> line toggle multiline-comment
 
