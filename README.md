@@ -56,7 +56,7 @@ linux:
 - [which-key.nvim](https://github.com/folke/which-key.nvim) | show keymaps while typing them
 - git stuff
   - gitsigns
-  - 'tpope/vim-fugitive',
+  - [vim-fugitive](https://github.com/tpope/vim-fugitive) | :Git or :G
   - 'tpope/vim-rhubarb'
 - [fidget.nvim](https://github.com/j-hui/fidget.nvim) | lsp status updates
 - [neodev.nvim](https://github.com/folke/neodev.nvim) | init.lua and plug-in dev helper
@@ -73,6 +73,7 @@ linux:
 - :checkhealth      -> check plug-in errors & warnings
 - :LspInfo          -> info about current lsp, including id
 - :LspRestart [id]  -> restart lsp, can give id
+- :Git or :G        -> git command
 - :Doc ...          -> open floating window with [term_docs]() documentation
 
 ## hotkeys

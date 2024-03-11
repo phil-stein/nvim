@@ -538,6 +538,7 @@ require('lazy').setup({
     --   end, { desc = "show :Doc for word under cursor"}),
     -- vim.keymap.set('n', '<F1>', ':echo expand("<cword>")<CR>', { desc = "show :Doc for word under cursor"}),
   },
+
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
   {
