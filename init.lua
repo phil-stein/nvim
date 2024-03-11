@@ -705,6 +705,7 @@ require('lazy').setup({
             },
           vimwiki = true,
           which_key = true,
+          dashboard = true,
         }
       }
       vim.cmd.colorscheme "catppuccin"
