@@ -46,7 +46,8 @@ linux:
 - [lualine](https://github.com/nvim-lualine/lualine.nvim) | better commandline, tab-line
 - [fine-cmdline](https://github.com/VonHeikemen/fine-cmdline.nvim) | floating commandline
 	- [nui.nvim](https://github.com/MunifTanjim/nui.nvim/tree/main) | ui-library, required by fine-cmdline
-- [vim-floatterm](https://github.com/voldikss/vim-floaterm) | floating terminal
+- _disabled_ [vim-floatterm](https://github.com/voldikss/vim-floaterm) | floating terminal
+- [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | floating terminal
 - [vimwiki](https://github.com/vimwiki/vimwiki) | notes, etc.
 - [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | code-completion
 	- luasnip | snippets

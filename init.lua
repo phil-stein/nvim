@@ -193,25 +193,89 @@ require('lazy').setup({
     end,
   },
 
-  {
-    -- floating terminal
-    'voldikss/vim-floaterm',
+  -- {
+  --   -- floating terminal
+  --   'voldikss/vim-floaterm',
+  --   -- vim.api.nvim_set_hl(0, 'FloatermBorder', { fg = "#ffffff", bg = "#123456" }), -- dont work
+  --   -- toggle open/closed with ctrl-t, 
+  --   -- autoclose=2 so dont need :FloatermKill
+  --   -- hi FloatermBorder to color to the result of ':hi Normal'
+  --   vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent<CR>', { silent = true }),
+  --   vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
+  --   vim.keymap.set('t', '<Esc>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
+  --   -- <C-b> -> build_editor
+  --   vim.keymap.set('n', '<C-b>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build<CR>', { silent = true, desc = "call build batch/bash file"}),
+  -- },
 
-    -- vim.api.nvim_set_hl(0, 'FloatermBorder', { fg = "#ffffff", bg = "#123456" }), -- dont work
-    -- toggle open/closed with ctrl-t, 
-    -- autoclose=2 so dont need :FloatermKill
-    -- hi FloatermBorder to color to the result of ':hi Normal'
-    vim.keymap.set('n', '<C-t>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent<CR>', { silent = true }),
-    vim.keymap.set('t', '<C-t>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
-    vim.keymap.set('t', '<Esc>', '<C-\\><C-n><CMD>:FloatermToggle<CR>', { silent = true }),
+  { -- floating terminal, toggle term
+    'akinsho/toggleterm.nvim', version = "*", opts = {},
+    config = function()
+      require("toggleterm").setup {
+        -- size can be a number or function which is passed the current terminal
+        -- size = 20,
+        -- size = function(term)
+        --   if term.direction == "horizontal" then
+        --     return 15
+        --   elseif term.direction == "vertical" then
+        --     return vim.o.columns * 0.4
+        --   end
+        -- end,
+        open_mapping = [[<C-t>]],
+        hide_numbers = true, -- hide the number column in toggleterm buffers
+        shade_filetypes = {},
+        autochdir = true, -- when neovim changes it current directory the terminal will change it's own when next it's opened
+        -- highlights = {
+        --   -- highlights which map to a highlight group name and a table of it's values
+        --   -- NOTE: this is only a subset of values, any group placed here will be set for the terminal window split
+        --   Normal = {
+        --     guibg = "<VALUE-HERE>",
+        --   },
+        --   NormalFloat = {
+        --     link = 'Normal'
+        --   },
+        --   FloatBorder = {
+        --     guifg = "<VALUE-HERE>",
+        --     guibg = "<VALUE-HERE>",
+        --   },
+        -- },
+        shade_terminals = false, -- NOTE: this option takes priority over highlights specified so if you specify Normal highlights you should set this to false
+        -- shading_factor = '<number>', -- the percentage by which to lighten terminal background, default: -30 (gets multiplied by -3 if background is light)
+        start_in_insert = true,
+        insert_mappings = true, -- whether or not the open mapping applies in insert mode
+        terminal_mappings = true, -- whether or not the open mapping applies in the opened terminals
+        persist_size = true,
+        persist_mode = true, -- if set to true (default) the previous terminal mode will be remembered
+        direction = 'float', -- 'vertical' | 'horizontal' | 'tab' | 'float',
+        close_on_exit = true, -- close the terminal window when the process exits
+         -- Change the default shell. Can be a string or a function returning a string
+        shell = vim.o.shell,
+        auto_scroll = true, -- automatically scroll to the bottom on terminal output
+        -- This field is only relevant if direction is set to 'float'
+        float_opts = {
+          -- The border key is *almost* the same as 'nvim_open_win'
+          -- see :h nvim_open_win for details on borders however
+          -- the 'curved' border is a custom border type
+          -- not natively supported but implemented in this plugin.
+          border = "rounded", -- 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
+          -- like `size`, width, height, row, and col can be a number or function which is passed the current terminal
+          width  = math.floor(vim.o.columns * 0.6),
+          height = math.floor(vim.o.lines   * 0.8),
+          -- row = <value>,
+          -- col = <value>,
+          -- winblend = 3,
+          -- zindex = <value>,
+          title_pos = 'center', -- 'left' | 'center' | 'right', position of the title of the floating window
+        },
+        winbar = {
+          enabled = false,
+          name_formatter = function(term) --  term: Terminal
+            return term.name
+          end
+        },
+      }
+    end,
 
-    -- <C-b> -> build_editor
-    vim.keymap.set('n', '<C-b>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build<CR>', { silent = true, desc = "call build batch/bash file"}),
-    -- vim.keymap.set('n', '<C-B>', ':FloatermToggle<CR><cmd>hi FloatermBorder guifg=#abb2bf guibg=#282c34<CR><cmd>FloatermUpdate --autoclose=2 --borderchars=─│─│╭╮╯╰ --silent"<CR>build - <CR>', { silent = true , desc = "call build batch/bash file"}),
-
-    -- terminal = require('terminal'),
-    -- vim.keymap.set('n', '<F2>', function() require('terminal').toggle_terminal() end, { desc = "123" }),
-    -- vim.keymap.set('n', '<F2>', function() require('terminal').test() end, { desc = "123" }),
+    vim.keymap.set('n', '<C-b>', ':ToggleTerm<CR>build <CR>', { silent = true , desc = "call build batch/bash file"}),
   },
 
   { -- hover / K documentation popup
