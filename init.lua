@@ -914,8 +914,38 @@ vim.api.nvim_create_autocmd('BufEnter', {
   group = highlight_group,
   pattern = '*',
 })
+-- highlight cursorline in replace-mode
+vim.api.nvim_create_autocmd('ModeChanged', {
+  callback = function()
+    local frappe = require("catppuccin.palettes").get_palette("frappe")
+    local m = vim.api.nvim_get_mode()
+    if m.mode == 'R' then
+      vim.cmd.hi('CursorLine guibg=#55262E') -- ..frappe.pink #guibg=#3b3f52
+      -- vim.cmd.hi('TermCursor guibg=#a44c73') -- guifg=#ffffff #guibg=#3b3f52
+      -- vim.cmd.hi('Cursor guibg=#a44c73')
+      -- vim.cmd.hi('Substitute guibg=#a44c73')
+      -- vim.cmd.hi('Normal guibg=#a44c73')
+    else
+      vim.cmd.hi('CursorLine guibg=#3b3f52') -- guifg=#ffffff 
+      -- cterm=reverse gui=reverse
+      -- vim.cmd.hi('TermCursor cterm=reverse gui=reverse') -- guifg=#ffffff #guibg=#3b3f52
+      -- vim.cmd.hi('Cursor guifg=#303446 guibg=#c6d0f5')
+      -- vim.cmd.hi('Normal guifg=#c6d0f5 guibg=#303446')
+    end
+    print(m.mode)
+    -- require('fidget').notify("mode: "..m.mode)
+    -- require('fidget').notify("overlay0: "..frappe.overlay0)
+    -- require('fidget').notify("overlay1: "..frappe.overlay1)
+    -- require('fidget').notify("overlay2: "..frappe.overlay2)
+    -- require('fidget').notify("surface0: "..frappe.surface0)
+    -- require('fidget').notify("surface1: "..frappe.surface1)
+    -- require('fidget').notify("surface2: "..frappe.surface2)
+  end,
+  group = highlight_group,
+  pattern = '*',
+})
 
-
+vim.o.concealcursor = ""
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
