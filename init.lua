@@ -57,6 +57,10 @@ vim.opt.rtp:prepend(lazypath)
   vim.keymap.set('x', 'q:', '')
   vim.keymap.set('t', 'q:', '')
 
+-- [[ custom commands ]]
+vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('fidget').notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
+vim.api.nvim_create_user_command('WQ', function() vim.cmd('wall | qall') end, {  desc = ':WQ -> :wall | :qall'})
+
 -- doent work
 -- -- tabline tab tabs tab-highlights
 -- vim.highlight.
@@ -146,6 +150,22 @@ require('lazy').setup({
     },
   },
 
+  { -- auto-session / session-management
+    'rmagatti/auto-session',
+    config = function()
+      require("auto-session").setup {
+        log_level = "error",
+        cwd_change_handling = {
+          restore_upcoming_session = true, -- already the default, no need to specify like this, only here as an example
+          pre_cwd_changed_hook = nil, -- already the default, no need to specify like this, only here as an example
+          post_cwd_changed_hook = function() -- example refreshing the lualine status line _after_ the cwd changes
+            require("lualine").refresh() -- refresh lualine so the new session name is displayed in the status bar
+          end,
+        },
+      }
+    end
+  },
+
   {
     -- floating command line
     'VonHeikemen/fine-cmdline.nvim',
@@ -192,6 +212,26 @@ require('lazy').setup({
       })
     end,
   },
+  { -- bufferline / tabline
+    'akinsho/bufferline.nvim',
+    after = "catppuccin",
+    config = function()
+      require("bufferline").setup {
+        highlights = require("catppuccin.groups.integrations.bufferline").get(),
+        options = {
+          separator_style = 'slant',
+          mode = 'tabs',
+          themable = true,
+          sort_by = 'id', -- 'insert_after_current' |'insert_at_end' | 'id' | 'extension' | 'relative_directory' | 'directory' | 'tabs' | function(buffer_a, buffer_b)
+          diagnostics = "nvim_lsp",
+          diagnostics_indicator = function(count, level)
+              local icon = level:match("error") and " " or ""
+              return " " .. icon .. count
+          end
+        },
+      }
+    end
+  },
 
   -- {
   --   -- floating terminal
@@ -220,8 +260,11 @@ require('lazy').setup({
         --     return vim.o.columns * 0.4
         --   end
         -- end,
+        name = "terminal",
         open_mapping = [[<C-t>]],
         hide_numbers = true, -- hide the number column in toggleterm buffers
+        start_in_insert = true,
+        on_open = function() vim.cmd('startinsert') end, -- start in insert
         shade_filetypes = {},
         autochdir = true, -- when neovim changes it current directory the terminal will change it's own when next it's opened
         -- highlights = {
@@ -240,7 +283,6 @@ require('lazy').setup({
         -- },
         shade_terminals = false, -- NOTE: this option takes priority over highlights specified so if you specify Normal highlights you should set this to false
         -- shading_factor = '<number>', -- the percentage by which to lighten terminal background, default: -30 (gets multiplied by -3 if background is light)
-        start_in_insert = true,
         insert_mappings = true, -- whether or not the open mapping applies in insert mode
         terminal_mappings = true, -- whether or not the open mapping applies in the opened terminals
         persist_size = true,
@@ -256,7 +298,7 @@ require('lazy').setup({
           -- see :h nvim_open_win for details on borders however
           -- the 'curved' border is a custom border type
           -- not natively supported but implemented in this plugin.
-          border = "rounded", -- 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
+          border = "curved", -- 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
           -- like `size`, width, height, row, and col can be a number or function which is passed the current terminal
           width  = math.floor(vim.o.columns * 0.6),
           height = math.floor(vim.o.lines   * 0.8),
@@ -270,12 +312,13 @@ require('lazy').setup({
           enabled = false,
           name_formatter = function(term) --  term: Terminal
             return term.name
+            -- return "hello"
           end
         },
       }
     end,
 
-    vim.keymap.set('n', '<C-b>', ':ToggleTerm<CR>build <CR>', { silent = true , desc = "call build batch/bash file"}),
+    vim.keymap.set('n', '<C-b>', ':ToggleTerm<CR>build<CR>', { silent = true , desc = "call build batch/bash file"}),
   },
 
   { -- hover / K documentation popup
@@ -651,6 +694,7 @@ require('lazy').setup({
     name = "catppuccin",
     priority = 1000,
     config = function()
+      local frappe = require("catppuccin.palettes").get_palette("frappe")
       require("catppuccin").setup {
         flavour = "frappe", -- latte, frappe, macchiato, mocha
         dim_inactive = {
@@ -660,7 +704,8 @@ require('lazy').setup({
         },
         no_italic = false, no_bold = false, no_underline = false,
         styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
-            comments = { "italic" }, -- Change the style of comments
+            -- "italic", "bold"
+            comments = { },
             conditionals = { },
             loops = {},
             functions = {},
@@ -706,10 +751,10 @@ require('lazy').setup({
             },
           vimwiki = true,
           which_key = true,
-          dashboard = true,
-        }
+          lsp_trouble = true,
+        },
       }
-      vim.cmd.colorscheme "catppuccin"
+      vim.cmd.colorscheme("catppuccin")
     end,
   },
 
@@ -724,10 +769,11 @@ require('lazy').setup({
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
+    after = "catppuccin",
     opts = {
       options = {
         icons_enabled = true,
-        theme = 'auto',
+        theme = 'catppuccin', -- 'auto',
         -- component_separators = '|',
         -- section_separators = '',
         component_separators = { left = '', right = ''},
@@ -738,10 +784,19 @@ require('lazy').setup({
       sections = {
         lualine_a = {'mode'},
         lualine_b = {'branch', 'diff', 'diagnostics'},
-        lualine_c = {'filename'},
+        lualine_c = {'filename', 'searchcount', "require('lsp-status').status()"}, -- require('auto-session.lib').current_session_name,
+
         lualine_x = {'encoding', 'fileformat', 'filetype', 'os.date("%I:%M", os.time())'}, --'os.date("%I:%M:%S", os.time())'
         lualine_y = {'progress'},
         lualine_z = {'location'}
+      },
+      inactive_sections = {
+        lualine_a = {'filename'},
+        lualine_b = {},
+        lualine_c = {},
+        lualine_x = {'encoding', 'fileformat', 'filetype', 'os.date("%I:%M", os.time())'},
+        lualine_y = {'location'},
+        lualine_z = {}
       },
       -- show tabline
       -- tabline = {
@@ -803,14 +858,18 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
-  
+
   { -- show diagnostics in list, i.e. warnings, errors, hints
-   "folke/trouble.nvim",
-   dependencies = { "nvim-tree/nvim-web-devicons" },
-   opts = {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
+    "folke/trouble.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {
+      height = 10, -- height of the trouble list when position is top or bottom
+      mode = "document_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
+        action_keys = { -- key mappings for actions in the trouble list
+          open_split = { "<c-x>" }, -- open buffer in new split
+          open_vsplit = { "<c-v>" }, -- open buffer in new vsplit
+          open_tab = { "<c-t>" }, -- open buffer in new tab
+        }
    },
   }
 
@@ -829,6 +888,32 @@ require('lazy').setup({
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   -- { import = 'custom.plugins' },
 }, {})
+
+
+-- [[ custom highlights ]] 
+-- doesnt work setting it in catppuccin directly
+
+-- highlight on yank
+-- See `:help vim.highlight.on_yank()`
+local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+  group = highlight_group,
+  pattern = '*',
+})
+-- highlight lualine inactive buffer / window sepeartor
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function()
+    -- vim.cmd.hi('lualine_c_inactive guifg=#737994 guibg=#292c3c') -- <- defauklt
+    vim.cmd.hi('lualine_a_inactive  guibg=#252736') -- guifg=#ffffff
+    vim.cmd.hi('lualine_b_inactive  guibg=#252736') -- guifg=#ffffff
+    vim.cmd.hi('lualine_c_inactive  guibg=#252736') -- guifg=#ffffff
+  end,
+  group = highlight_group,
+  pattern = '*',
+})
 
 
 
@@ -916,17 +1001,6 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 vim.keymap.set('n', '<leader>q',  function() require("trouble").toggle() end, { desc = 'Open diagnostics list' })
-
--- [[ Highlight on yank ]]
--- See `:help vim.highlight.on_yank()`
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-  group = highlight_group,
-  pattern = '*',
-})
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`

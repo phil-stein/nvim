@@ -53,6 +53,7 @@ linux:
 	- luasnip | snippets
 - _disabled_ [barbar.nvim](https://github.com/romgrk/barbar.nvim) | tab-line
 - _disabled_ [tabline.nvim](https://github.com/kdheepak/tabline.nvim) | tab-line
+- [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) | tab-line
 - [which-key.nvim](https://github.com/folke/which-key.nvim) | show keymaps while typing them
 - git stuff
   - gitsigns
@@ -74,6 +75,7 @@ linux:
 - :LspInfo          -> info about current lsp, including id
 - :LspRestart [id]  -> restart lsp, can give id
 - :Git or :G        -> git command
+- :WQ               -> :wqall, but works with terminals
 - :Doc ...          -> open floating window with [term_docs]() documentation
 
 ## hotkeys
