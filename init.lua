@@ -163,6 +163,17 @@ require('lazy').setup({
           end,
         },
       }
+    end,
+  },
+  { -- session telsescope view
+    'rmagatti/session-lens',
+    dependencies = {'rmagatti/auto-session', 'nvim-telescope/telescope.nvim'},
+    config = function()
+      require('session-lens').setup({
+        --[[your custom config--]]
+        prompt_title = 'sessions',
+        path_display={'shorten'},
+      })
     end
   },
 
@@ -222,7 +233,10 @@ require('lazy').setup({
           separator_style = 'slant',
           mode = 'tabs',
           themable = true,
-          sort_by = 'id', -- 'insert_after_current' |'insert_at_end' | 'id' | 'extension' | 'relative_directory' | 'directory' | 'tabs' | function(buffer_a, buffer_b)
+          close_command = "q",
+          right_mouse_command = "q",
+          enforce_regular_tabs = true,
+          -- sort_by = 'insert_after_current', -- 'insert_after_current' |'insert_at_end' | 'id' | 'extension' | 'relative_directory' | 'directory' | 'tabs' | function(buffer_a, buffer_b)
           diagnostics = "nvim_lsp",
           diagnostics_indicator = function(count, level)
               local icon = level:match("error") and " " or ""
@@ -694,7 +708,6 @@ require('lazy').setup({
     name = "catppuccin",
     priority = 1000,
     config = function()
-      local frappe = require("catppuccin.palettes").get_palette("frappe")
       require("catppuccin").setup {
         flavour = "frappe", -- latte, frappe, macchiato, mocha
         dim_inactive = {
@@ -754,8 +767,9 @@ require('lazy').setup({
           lsp_trouble = true,
         },
       }
-      vim.cmd.colorscheme("catppuccin")
+    vim.cmd.colorscheme("catppuccin")
     end,
+    -- more custom highlighting after lazy-vim plugin stuff
   },
 
   { -- change line number to reflect current mode
@@ -781,21 +795,21 @@ require('lazy').setup({
         section_separators = { left = '', right = '' },
         -- component_separators = { left = '', right = '' }
       },
-      sections = {
+      sections = { -- 'filename','encoding', 'fileformat', 
         lualine_a = {'mode'},
         lualine_b = {'branch', 'diff', 'diagnostics'},
-        lualine_c = {'filename', 'searchcount', "require('lsp-status').status()"}, -- require('auto-session.lib').current_session_name,
+        lualine_c = {'vim.fn.expand("%:.")', "require('lsp-status').status()"}, -- require('auto-session.lib').current_session_name,
 
-        lualine_x = {'encoding', 'fileformat', 'filetype', 'os.date("%I:%M", os.time())'}, --'os.date("%I:%M:%S", os.time())'
-        lualine_y = {'progress'},
-        lualine_z = {'location'}
+        lualine_x = { 'filetype' }, 
+        lualine_y = { 'os.date("%I:%M", os.time())' },
+        lualine_z = { 'progress', 'location', 'vim.api.nvim_buf_line_count(0)'}
       },
       inactive_sections = {
-        lualine_a = {'filename'},
+        lualine_a = { 'vim.fn.expand("%:.")' }, -- relative path
         lualine_b = {},
         lualine_c = {},
-        lualine_x = {'encoding', 'fileformat', 'filetype', 'os.date("%I:%M", os.time())'},
-        lualine_y = {'location'},
+        lualine_x = { 'filetype', 'os.date("%I:%M", os.time())', 'location', 'vim.api.nvim_buf_line_count(0)' },
+        lualine_y = {},
         lualine_z = {}
       },
       -- show tabline
@@ -904,12 +918,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 -- highlight lualine inactive buffer / window sepeartor
-vim.api.nvim_create_autocmd('BufEnter', {
+vim.api.nvim_create_autocmd({'VimEnter', 'BufEnter'}, {
+-- vim.api.nvim_create_autocmd({'ColorScheme'}, {
   callback = function()
-    -- vim.cmd.hi('lualine_c_inactive guifg=#737994 guibg=#292c3c') -- <- defauklt
-    vim.cmd.hi('lualine_a_inactive  guibg=#252736') -- guifg=#ffffff
-    vim.cmd.hi('lualine_b_inactive  guibg=#252736') -- guifg=#ffffff
-    vim.cmd.hi('lualine_c_inactive  guibg=#252736') -- guifg=#ffffff
+    -- local frappe = require("catppuccin.palettes").get_palette("frappe")
+    vim.cmd.hi('lualine_a_inactive                     guibg=#252736')
+    vim.cmd.hi('lualine_b_inactive                     guibg=#252736')
+    vim.cmd.hi('lualine_c_inactive                     guibg=#252736')
+    vim.cmd.hi('lualine_x_filetype_DevIconLua_inactive guibg=#252736')
+    vim.cmd.hi('lualine_x_filetype_DevIconTxt_inactive guibg=#252736')
+    vim.cmd.hi('WinSeparator                           guibg=#252736')
   end,
   group = highlight_group,
   pattern = '*',
@@ -917,39 +935,41 @@ vim.api.nvim_create_autocmd('BufEnter', {
 -- highlight cursorline in replace-mode
 vim.api.nvim_create_autocmd('ModeChanged', {
   callback = function()
-    local frappe = require("catppuccin.palettes").get_palette("frappe")
     local m = vim.api.nvim_get_mode()
+    local frappe = require("catppuccin.palettes").get_palette("frappe")
     if m.mode == 'R' then
-      vim.cmd.hi('CursorLine guibg=#55262E') -- ..frappe.pink #guibg=#3b3f52
-      -- vim.cmd.hi('TermCursor guibg=#a44c73') -- guifg=#ffffff #guibg=#3b3f52
-      -- vim.cmd.hi('Cursor guibg=#a44c73')
-      -- vim.cmd.hi('Substitute guibg=#a44c73')
-      -- vim.cmd.hi('Normal guibg=#a44c73')
+      -- vim.cmd.hi('CursorLine guibg=#55262E') -- #guibg=#3b3f52
+      -- vim.cmd.hi('CursorLine guibg=#4E2D33') -- #guibg=#3b3f52
+      -- vim.cmd.hi('CursorLine guibg=#B13F52') -- #guibg=#3b3f52
+      vim.cmd.hi('CursorLine guibg=#8F3947') -- #guibg=#3b3f52
+    elseif m.mode == 'i' then
+      vim.cmd.hi('CursorLine guibg=#3B3F5A') -- guifg=#ffffff 
     else
       vim.cmd.hi('CursorLine guibg=#3b3f52') -- guifg=#ffffff 
-      -- cterm=reverse gui=reverse
-      -- vim.cmd.hi('TermCursor cterm=reverse gui=reverse') -- guifg=#ffffff #guibg=#3b3f52
-      -- vim.cmd.hi('Cursor guifg=#303446 guibg=#c6d0f5')
-      -- vim.cmd.hi('Normal guifg=#c6d0f5 guibg=#303446')
     end
-    print(m.mode)
-    -- require('fidget').notify("mode: "..m.mode)
-    -- require('fidget').notify("overlay0: "..frappe.overlay0)
-    -- require('fidget').notify("overlay1: "..frappe.overlay1)
-    -- require('fidget').notify("overlay2: "..frappe.overlay2)
-    -- require('fidget').notify("surface0: "..frappe.surface0)
-    -- require('fidget').notify("surface1: "..frappe.surface1)
-    -- require('fidget').notify("surface2: "..frappe.surface2)
+    -- print(m.mode)
+    require('fidget').notify("mode: "..m.mode)
   end,
   group = highlight_group,
   pattern = '*',
 })
 
-vim.o.concealcursor = ""
-
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
+
+-- vert split seperator bars character
+vim.cmd('set fillchars+=vert:\\ ')
+-- vim.o.fillchars:append('vert:\\ ')
+-- vim.o.fillchars = 'vert:\\ vertleft:\\ vertright:\\ verthoriz:\\ '
+
+-- set replace-mode cursor to be full as well, like normal-mode 
+-- default: "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20"
+vim.o.guicursor = "r-cr-n-v-c-sm:block,i-ci-ve:ver25,o:hor20"
+
+-- set gui font, aka. for nvim-qt
+-- @TODO: doesnt work
+vim.o.guifont   = "JetBrainsMono NFM Regular"
 
 -- Set highlight on search
 vim.o.hlsearch = true
@@ -1117,16 +1137,19 @@ vim.keymap.set('n', '<leader>?',       require('telescope.builtin').oldfiles, { 
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
-  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
-    previewer = false,
+  require('telescope.builtin').current_buffer_fuzzy_find(
+  {
+    -- require('telescope.themes').get_dropdown {
+    --   winblend = 10,
+    --   previewer = false,
+    -- },
   })
 end, { desc = '[/] Fuzzily search in current buffer' })
 
 local function telescope_live_grep_open_files()
   require('telescope.builtin').live_grep {
     grep_open_files = true,
-    prompt_title = 'Live Grep in Open Files',
+    prompt_title = 'live grep in open files',
   }
 end
 vim.keymap.set('n', '<leader>s/', telescope_live_grep_open_files,           { desc = '[S]earch [/] in Open Files' })
@@ -1139,6 +1162,8 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep,   { de
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>',                   { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume,      { desc = '[S]earch [R]esume' })
+
+vim.keymap.set('n', '<leader>S', require('session-lens').search_session,    { desc = 'search [S]essions' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`

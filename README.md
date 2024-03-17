@@ -51,8 +51,6 @@ linux:
 - [vimwiki](https://github.com/vimwiki/vimwiki) | notes, etc.
 - [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | code-completion
 	- luasnip | snippets
-- _disabled_ [barbar.nvim](https://github.com/romgrk/barbar.nvim) | tab-line
-- _disabled_ [tabline.nvim](https://github.com/kdheepak/tabline.nvim) | tab-line
 - [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) | tab-line
 - [which-key.nvim](https://github.com/folke/which-key.nvim) | show keymaps while typing them
 - git stuff
@@ -67,6 +65,8 @@ linux:
 - [hover.nvim](https://github.com/lewis6991/hover.nvim) | better 'K' documentation
 - [modicator.nvim](https://github.com/mawkler/modicator.nvim) | hange line number to reflect current mode
 - [trouble.nvim](https://github.com/folke/trouble.nvim) | show diagnostics list
+- [auto-session](https://github.com/rmagatti/auto-session) | save and load sessions based on cwd
+  - [session-lens](https://github.com/rmagatti/session-lens) | view sessions using telescope
 
 ## commands
 - :Lazy             -> open plugin manager ui
@@ -84,6 +84,7 @@ linux:
 	- <C-s>						-> open in horizontal split
 	- <C-x>						-> open in vertical split
 	- <C-t>						-> open in tab
+	- <leader>S				-> search sessions 
 	- <leader>f				-> search files
 	- <leader>?       -> search recently opened
 	- <leader><space> -> search open buffers
