@@ -948,7 +948,7 @@ vim.api.nvim_create_autocmd('ModeChanged', {
       vim.cmd.hi('CursorLine guibg=#3b3f52') -- guifg=#ffffff 
     end
     -- print(m.mode)
-    require('fidget').notify("mode: "..m.mode)
+    -- require('fidget').notify("mode: "..m.mode)
   end,
   group = highlight_group,
   pattern = '*',
