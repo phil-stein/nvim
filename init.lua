@@ -1310,7 +1310,25 @@ require('which-key').register({
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
 require('mason').setup()
-require('mason-lspconfig').setup()
+-- require('mason-lspconfig').setup()
+require("mason-lspconfig").setup {
+    ensure_installed = { "clangd", "ols", "lua_ls" },
+}
+require('mason-lspconfig').setup_handlers {
+  function (server_name) -- default handler (optional)
+      require("lspconfig")[server_name].setup {}
+  end,
+}
+-- require('mason-lspconfig').setup {
+--   handlers = {
+--     function(server_name)
+--       local server = servers[server_name] or {}
+--
+--       server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+--       require('lspconfig')[server_name].setup(server)
+--     end,
+--   },
+-- }
 require("mason-nvim-dap").setup({ ensure_installed = { "cppdbg" } })
 require("dapui").setup()
 
@@ -1420,6 +1438,7 @@ dap.configurations.c = {
 --  define the property 'filetypes' to the map in question.
 local servers = {
   -- clangd = {},
+  -- ols    = {},
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
