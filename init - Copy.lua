@@ -498,13 +498,12 @@ require('lazy').setup({
     end,
   },
 
-  { -- [[ dap ]] -> debug adapter protocol, debugging using gdb in nvim
+  { -- dap -> debug adapter protocol, debugging using gdb in nvim
           -- added myself, dap debugging
     'mfussenegger/nvim-dap',
-    'jay-babu/mason-nvim-dap.nvim',
-  },
-  { -- [[ dapui ]] -> show stacktraces, watches, etc, in ui windows
-    "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    "jay-babu/mason-nvim-dap.nvim",
+    "nvim-neotest/nvim-nio", -- async ui used by dap-ui
+    'rcarriga/nvim-dap-ui',
     config = function()
       require('dapui').setup()
       --   require('dapui').setup() {
@@ -578,8 +577,7 @@ require('lazy').setup({
       --   }
       -- }
     end,
-
-    -- [[ dap / debugging keymap ]]
+    -- dap / debugging keymap
     vim.keymap.set('n', '<F5>',  function() require('dap').continue()  end, { desc = 'F5  -> run debuggger'}),
     vim.keymap.set('n', '<F9>',  function() require('dap').step_into() end, { desc = 'F9  -> step into'}),
     vim.keymap.set('n', '<F10>', function() require('dap').step_over() end, { desc = 'F10 -> step over'}),
@@ -590,17 +588,20 @@ require('lazy').setup({
     vim.keymap.set('n', '<leader>b',  function() require('dap').toggle_breakpoint() end, { desc = 'leader b  -> toggle breakpoint'}),
     vim.keymap.set('n', '<leader>dr', function() require('dap').repl.open()         end, { desc = 'leader dr -> open repl'}),
 
+    -- vim.keymap.set('n', '<leader>d',  function() require('dapui').open()            end, { desc = 'leader d  -> open debug ui'})
+    -- vim.keymap.set('n', '<leader>d',  ":lua require('dapui').open()<CR>" , {  silent = true, desc = 'leader d  -> open debug ui, opens automatically'})
     vim.keymap.set('n', '<leader>d',  function() require('dapui').toggle() end, {  silent = true, desc = 'leader d  -> toggle debug ui, does this automatically'}),
 
-  },
-  { -- dap virtual text -> show variable values 
-    'theHamsta/nvim-dap-virtual-text', dependencies = { 'mfussenegger/nvim-dap', 'nvim-treesitter/nvim-treesitter'},
-    config = function()
-      require("nvim-dap-virtual-text").setup() {
-          all_frames = true,
-          virt_text_pos = 'inline',
-        }
-    end
+    -- doesnt work
+    -- { -- dap virtual text, show variable values 
+    --   'theHamsta/nvim-dap-virtual-text',
+    --   config = function()
+    --     require("nvim-dap-virtual-text").setup() {
+    --         all_frames = true,
+    --         virt_text_pos = 'inline',
+    --       }
+    --   end
+    -- },
   },
 
   { -- doc | DOC, custom hotkey usinf nui.nvim
