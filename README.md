@@ -40,7 +40,7 @@ linux:
 	- ripgrep
 	- plenary
 	- telescope-fzf-native | fuzzy finder
-	- [telescope-file-browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) | file browser
+	- _diasbled_ [telescope-file-browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) | file browser
 - [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) 
 - [devicons](https://github.com/ryanoasis/vim-devicons) | use nerd-fonts for icons
 - [lualine](https://github.com/nvim-lualine/lualine.nvim) | better commandline, tab-line
@@ -64,9 +64,10 @@ linux:
 - [vim-glsl](https://github.com/tikhomirov/vim-glsl) | glsl-highlighting
 - [hover.nvim](https://github.com/lewis6991/hover.nvim) | better 'K' documentation
 - [modicator.nvim](https://github.com/mawkler/modicator.nvim) | hange line number to reflect current mode
-- [trouble.nvim](https://github.com/folke/trouble.nvim) | show diagnostics list
+- _disabled_ [trouble.nvim](https://github.com/folke/trouble.nvim) | show diagnostics list
 - [auto-session](https://github.com/rmagatti/auto-session) | save and load sessions based on cwd
   - [session-lens](https://github.com/rmagatti/session-lens) | view sessions using telescope
+- [neotree](https://github.com/nvim-neo-tree/neo-tree.nvim) | file explorer
 
 ## commands
 - :Lazy             -> open plugin manager ui

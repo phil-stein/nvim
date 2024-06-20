@@ -710,7 +710,7 @@ require('lazy').setup({
       "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
     },
-    vim.api.nvim_set_keymap("n","<C-d>", ":tabnew | Neotree position=current<CR>", { noremap = true }),
+    -- vim.api.nvim_set_keymap("n","<C-d>", ":tabnew | Neotree position=current<CR>", { noremap = true }),
   },
 
   {
@@ -857,6 +857,38 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+
+-- [[ configure neotree ]]
+Neotree_open = false
+Neotree_buf  = -1
+Neotree_win  = -1
+local function neotree_toggle()
+  -- print('neotree_open: '..tostring(Neotree_open)..', win: '..tostring(Neotree_win)..', buf: '..tostring(Neotree_buf))
+
+  -- if window already openend swicth to that window
+  -- else create new neotree window 
+  if Neotree_open and vim.api.nvim_win_is_valid(Neotree_win) and vim.api.nvim_buf_is_valid(Neotree_buf) then
+    vim.api.nvim_set_current_win(Neotree_win)
+  else
+    vim.cmd("tabnew")
+    Neotree_buf = vim.api.nvim_get_current_buf()
+    Neotree_win = vim.api.nvim_get_current_win()
+    vim.cmd("Neotree position=current")
+    Neotree_open = true
+    -- autoclose neotree on exiting
+    vim.api.nvim_create_autocmd('ExitPre', {
+      callback = function()
+        if Neotree_open and vim.api.nvim_win_is_valid(Neotree_win) and vim.api.nvim_buf_is_valid(Neotree_buf) then
+          vim.api.nvim_buf_delete(Neotree_buf)
+          vim.api.nvim_win_close(Neotree_win, true)
+        end
+      end
+    })
+  end
+end
+vim.keymap.set("n", "<C-d>", neotree_toggle, {  noremap = true, desc = ''})
+
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
