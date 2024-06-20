@@ -498,12 +498,13 @@ require('lazy').setup({
     end,
   },
 
-  { -- dap -> debug adapter protocol, debugging using gdb in nvim
+  { -- [[ dap ]] -> debug adapter protocol, debugging using gdb in nvim
           -- added myself, dap debugging
     'mfussenegger/nvim-dap',
-    "jay-babu/mason-nvim-dap.nvim",
-    "nvim-neotest/nvim-nio", -- async ui used by dap-ui
-    'rcarriga/nvim-dap-ui',
+    'jay-babu/mason-nvim-dap.nvim',
+  },
+  { -- [[ dapui ]] -> show stacktraces, watches, etc, in ui windows
+    "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
     config = function()
       require('dapui').setup()
       --   require('dapui').setup() {
@@ -577,7 +578,8 @@ require('lazy').setup({
       --   }
       -- }
     end,
-    -- dap / debugging keymap
+
+    -- [[ dap / debugging keymap ]]
     vim.keymap.set('n', '<F5>',  function() require('dap').continue()  end, { desc = 'F5  -> run debuggger'}),
     vim.keymap.set('n', '<F9>',  function() require('dap').step_into() end, { desc = 'F9  -> step into'}),
     vim.keymap.set('n', '<F10>', function() require('dap').step_over() end, { desc = 'F10 -> step over'}),
@@ -588,21 +590,18 @@ require('lazy').setup({
     vim.keymap.set('n', '<leader>b',  function() require('dap').toggle_breakpoint() end, { desc = 'leader b  -> toggle breakpoint'}),
     vim.keymap.set('n', '<leader>dr', function() require('dap').repl.open()         end, { desc = 'leader dr -> open repl'}),
 
-    -- vim.keymap.set('n', '<leader>d',  function() require('dapui').open()            end, { desc = 'leader d  -> open debug ui'})
-    -- vim.keymap.set('n', '<leader>d',  ":lua require('dapui').open()<CR>" , {  silent = true, desc = 'leader d  -> open debug ui, opens automatically'})
     vim.keymap.set('n', '<leader>d',  function() require('dapui').toggle() end, {  silent = true, desc = 'leader d  -> toggle debug ui, does this automatically'}),
 
-    -- doesnt work
-    -- { -- dap virtual text, show variable values 
-    --   'theHamsta/nvim-dap-virtual-text',
-    --   config = function()
-    --     require("nvim-dap-virtual-text").setup() {
-    --         all_frames = true,
-    --         virt_text_pos = 'inline',
-    --       }
-    --   end
-    -- },
   },
+  -- { -- dap virtual text -> show variable values 
+  --   'theHamsta/nvim-dap-virtual-text', dependencies = { 'mfussenegger/nvim-dap', 'nvim-treesitter/nvim-treesitter'},
+  --   config = function()
+  --     require("nvim-dap-virtual-text").setup() {
+  --         all_frames = true,
+  --         virt_text_pos = 'inline',
+  --       }
+  --   end
+  -- },
 
   { -- doc | DOC, custom hotkey usinf nui.nvim
     -- :Doc command
@@ -878,7 +877,8 @@ require('lazy').setup({
 
   {
     -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
+    'nvim-lualine/lualine.nvim', 
+    dependencies = { 'rmagatti/auto-session' },
     -- See `:help lualine.txt`
     after = "catppuccin",
     opts = {
@@ -895,9 +895,10 @@ require('lazy').setup({
       sections = { -- 'filename','encoding', 'fileformat', 
         lualine_a = {'mode'},
         lualine_b = {'branch', 'diff', 'diagnostics'},
-        lualine_c = {'vim.fn.expand("%:.")', "require('lsp-status').status()"}, -- require('auto-session.lib').current_session_name,
+        lualine_c = {'vim.fn.expand("%:.")', 'require("auto-session.lib").current_session_name()' },
+        -- lualine_c = {'vim.fn.expand("%:.")', 'require("auto-session.lib").current_session_name()', 'require("nvim_lsp").status()' }, 
 
-        lualine_x = { 'filetype' }, 
+        lualine_x = { 'filetype' },
         lualine_y = { 'os.date("%I:%M", os.time())' },
         lualine_z = { 'progress', 'location', 'vim.api.nvim_buf_line_count(0)'}
       },
@@ -952,14 +953,20 @@ require('lazy').setup({
           return vim.fn.executable 'make' == 1
         end,
       },
-      {
-        -- telescope file browser
-        "nvim-telescope/telescope-file-browser.nvim",
-        -- dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
-        vim.api.nvim_set_keymap("n","<C-d>", ":Telescope file_browser<CR>", { noremap = true }),
-      },
+      -- {
+      --   -- telescope file browser
+      --   "nvim-telescope/telescope-file-browser.nvim",
+      --   -- dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+      --   vim.api.nvim_set_keymap("n","<C-d>", ":Telescope file_browser<CR>", { noremap = true }),
+      -- },
     },
   },
+
+  -- {
+  --   -- [[ nerdtree | file browser ]]
+  --   'preservim/nerdtree',
+  --   vim.api.nvim_set_keymap("n","<C-d>", ":NERDTreeToggle<CR>", { noremap = true }),
+  -- },
 
   {
     -- Highlight, edit, and navigate code
@@ -970,19 +977,19 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
-  { -- show diagnostics in list, i.e. warnings, errors, hints
-    "folke/trouble.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = {
-      height = 10, -- height of the trouble list when position is top or bottom
-      mode = "document_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
-        action_keys = { -- key mappings for actions in the trouble list
-          open_split = { "<c-x>" }, -- open buffer in new split
-          open_vsplit = { "<c-v>" }, -- open buffer in new vsplit
-          open_tab = { "<c-t>" }, -- open buffer in new tab
-        }
-   },
-  }
+  -- { -- show diagnostics in list, i.e. warnings, errors, hints
+  --   "folke/trouble.nvim",
+  --   dependencies = { "nvim-tree/nvim-web-devicons" },
+  --   opts = {
+  --     height = 10, -- height of the trouble list when position is top or bottom
+  --     mode = "document_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
+  --       action_keys = { -- key mappings for actions in the trouble list
+  --         open_split = { "<c-x>" }, -- open buffer in new split
+  --         open_vsplit = { "<c-v>" }, -- open buffer in new vsplit
+  --         open_tab = { "<c-t>" }, -- open buffer in new tab
+  --       }
+  --  },
+  -- }
 
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
@@ -1153,26 +1160,27 @@ vim.keymap.set('n', '<leader>q',  function() require("trouble").toggle() end, { 
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   extensions = {
-    file_browser = {
-      -- theme = "ivy",
-      initial_mode = 'normal',  -- open in normal mode
-      -- disables netrw and use telescope-file-browser in its place
-      hijack_netrw = true,
-      -- mappings = {
-      --   ["i"] = {
-      --     -- your custom insert mode mappings
-      --   },
-      --   ["n"] = {
-      --     -- your custom normal mode mappings
-      --   },
-      -- },
-    },
+    -- file_browser = {
+    --   -- theme = "ivy",
+    --   initial_mode = 'normal',  -- open in normal mode
+    --   -- disables netrw and use telescope-file-browser in its place
+    --   hijack_netrw = true,
+    --   -- mappings = {
+    --   --   ["i"] = {
+    --   --     -- your custom insert mode mappings
+    --   --   },
+    --   --   ["n"] = {
+    --   --     -- your custom normal mode mappings
+    --   --   },
+    --   -- },
+    -- },
   },
   defaults = {
     file_ignore_patterns = {
       ".git\\", ".vs\\", ".cache\\", ".git/", ".vs/", ".cache/",
       "_bin\\", "_bin/", "bin\\", "bin/",
-      "%.o", "%.zip",
+      -- "%.o",
+      "%.zip",
       "%.tex","%.mesh",
       "%.swp", "%.un~", "%.*%~" },
     mappings = {
@@ -1260,7 +1268,8 @@ vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>',                   { de
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume,      { desc = '[S]earch [R]esume' })
 
-vim.keymap.set('n', '<leader>S', require('session-lens').search_session,    { desc = 'search [S]essions' })
+-- [[ session-lens keymaps ]]
+-- vim.keymap.set('n', '<leader>S', require('session-lens').search_session,    { desc = 'search [S]essions' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -1268,7 +1277,7 @@ vim.keymap.set('n', '<leader>S', require('session-lens').search_session,    { de
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'lua', 'vimdoc', 'vim', 'odin'}, -- , 'bash', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'go'
+    ensure_installed = { 'c', 'cpp', 'lua', 'vimdoc', 'vim', 'odin', 'glsl' }, -- 'gitignore', 'make', 'zig', 'bash', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'go'
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
