@@ -36,11 +36,13 @@ linux:
   - [mason-nvim-dap](https://github.com/jay-babu/mason-nvim-dap.nvim) | dap adapters for mason
 - [nvim-dap](https://github.com/mfussenegger/nvim-dap) | dap, debuggger
   - [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui) | ui interface for dap debugging
+  - [nvim-dap-virtual-text](https://github.com/theHamsta/nvim-dap-virtual-text) | virtual text showing variable values
 - [telescope](https://github.com/nvim-telescope/telescope.nvim) | file-navigation
 	- ripgrep
 	- plenary
 	- telescope-fzf-native | fuzzy finder
 	- _diasbled_ [telescope-file-browser](https://github.com/nvim-telescope/telescope-file-browser.nvim) | file browser
+  - [telescope-tabs](https://github.com/LukasPietzschmann/telescope-tabs)
 - [treesitter](https://github.com/nvim-treesitter/nvim-treesitter) 
 - [devicons](https://github.com/ryanoasis/vim-devicons) | use nerd-fonts for icons
 - [lualine](https://github.com/nvim-lualine/lualine.nvim) | better commandline, tab-line
@@ -82,45 +84,49 @@ linux:
 ## hotkeys
 - telescope
 	- ? (normal)			-> help / key mappings
-	- <C-s>						-> open in horizontal split
-	- <C-x>						-> open in vertical split
-	- <C-t>						-> open in tab
-	- <leader>S				-> search sessions 
-	- <leader>f				-> search files
-	- <leader>?       -> search recently opened
-	- <leader><space> -> search open buffers
-	- <leader>/				-> search keyword, fuzzyfind
-	- <leader>gf			-> search git files
-	- <C-d>						-> file broswer
+	- C-s  						-> open in horizontal split
+	- C-x  						-> open in vertical split
+	- C-t  						-> open in tab
+	- leader S				-> search sessions 
+	- leader f				-> search files
+	- leader ?        -> search recently opened
+	- leader space    -> search open buffers
+	- leader /				-> search keyword, fuzzyfind
+	- leader gf			  -> search git files
+- file browser
+  - C-d						  -> toggle file broswer
 - lsp
-	- <leader>rn			-> rename
+	- leader rn	  		-> rename
 	- gd							-> goto defenition
 	- GD              -> open defenition in vsplit
 	- gD							-> goto declaration
 	- gI							-> goto implementation
-	- <leader>D				-> goto type defenition
-  - <leader>e       -> show diagnostic message
-  - <leader>q       -> show diagnostic message list
+	- leader D				-> goto type defenition
+  - leader e        -> show diagnostic message
+  - leader q        -> show diagnostic message list
 - float-term 
-	- <C-t>	          -> toggle terminal
-	- <C-b>						-> run build   | for running build batch / bash / powershell file
-	- _disabled_ <C-B>						-> run build - | can check in batch file for arg and build different proj
+	- C-t	            -> toggle terminal
+	- C-b						  -> run build   | for running build batch / bash / powershell file
+	- _disabled_ C-B						-> run build - | can check in batch file for arg and build different proj
 - code-completion
-	- <CR>						-> accept completion
-	- <Tab>		  			-> cycle through completions
+	- CR						  -> accept completion
+	- Tab		  			  -> cycle through completions
 - hover
 	- K								-> hover documentation
 	- gK							-> hover documentation selection
-	- <C-n>						-> next
-	- <C-p>						-> previous
+	- C-n						  -> next
+	- C-p						  -> previous
 - dap | debugging
-  - <F5>            -> run debuggger
-  - <F9>            -> step into
-  - <F10>           -> step over
-  - <F12>           -> step out
-  - <leader>b       -> toggle breakpoint,
-  - <leader>dr      -> open repl,
-  - <leader>d       -> open debug ui, opens automatically
+  - F4             -> end debuggger
+  - F5             -> run debuggger
+  - F6             -> step into
+  - F7             -> step over
+  - F8             -> step out
+  - leader b       -> toggle breakpoint,
+  - leader gb      -> run debugger, break at cursor
+  - leader dr      -> open repl,
+  - leader d       -> open debug ui, opens automatically
+  - leader d       -> show info about word under cursor
 - comment
   - gcc             -> line toggle comment
   - gbc             -> line toggle multiline-comment

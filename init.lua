@@ -234,6 +234,7 @@ require('lazy').setup({
     dependencies = { 'MunifTanjim/nui.nvim' },
     -- open with :
     vim.api.nvim_set_keymap('n', ':', '<cmd>FineCmdline<CR>', {noremap = true}),
+    -- vim.api.nvim_set_keymap('v', '<CR>', "<C-u>FineCmdline '<,'><CR>", {noremap = true}),
     --  open with enter
     -- vim.api.nvim_set_keymap('n', '<CR>', '<cmd>FineCmdline<CR>', {noremap=true}),
     config = function()
@@ -274,6 +275,7 @@ require('lazy').setup({
       })
     end,
   },
+
   { -- bufferline / tabline
     'akinsho/bufferline.nvim',
     after = "catppuccin",
@@ -296,6 +298,19 @@ require('lazy').setup({
         },
       }
     end
+  },
+  {
+    -- telescope tabs | tab
+  	'LukasPietzschmann/telescope-tabs',
+  	config = function()
+  		require('telescope').load_extension 'telescope-tabs'
+  		require('telescope-tabs').setup {
+        -- setting keybinds to garbage so its effectively deactivated
+        close_tab_shortcut_i = '<leader><C-ü>B', -- if you're in insert mode
+        close_tab_shortcut_n = '<leader><C-ü>B', -- if you're in normal mode
+  		}
+  	end,
+  	dependencies = { 'nvim-telescope/telescope.nvim' },
   },
 
   { -- floating terminal, toggle term
@@ -442,27 +457,40 @@ require('lazy').setup({
 
   { -- [[ dap ]] -> debug adapter protocol, debugging using gdb in nvim
           -- added myself, dap debugging
-    'mfussenegger/nvim-dap',
-    'jay-babu/mason-nvim-dap.nvim',
-  },
-  { -- [[ dapui ]] -> show stacktraces, watches, etc, in ui windows
-    "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+  --   'mfussenegger/nvim-dap',
+  --   'jay-babu/mason-nvim-dap.nvim',
+  -- },
+  -- { -- [[ dapui ]] -> show stacktraces, watches, etc, in ui windows
+  --   "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    "mfussenegger/nvim-dap",
+    dependencies = {
+      'williamboman/mason.nvim',
+      'jay-babu/mason-nvim-dap.nvim',
+      "rcarriga/nvim-dap-ui",
+      "nvim-neotest/nvim-nio",
+      "theHamsta/nvim-dap-virtual-text",
+    },
     config = function()
       require('dapui').setup()
+      require('nvim-dap-virtual-text').setup()
     end,
 
     -- [[ dap / debugging keymap ]]
-    vim.keymap.set('n', '<F5>',  function() require('dap').continue()  end, { desc = 'F5  -> run debuggger'}),
-    vim.keymap.set('n', '<F9>',  function() require('dap').step_into() end, { desc = 'F9  -> step into'}),
-    vim.keymap.set('n', '<F10>', function() require('dap').step_over() end, { desc = 'F10 -> step over'}),
-    vim.keymap.set('n', '<F12>', function() require('dap').step_out()  end, { desc = 'F12 -> step out'}),
-    vim.keymap.set('n', '<F4>',  function() require('dap').close() require('dapui').close() end,
-                                 { desc = 'F4 -> close dap'}),
+    vim.keymap.set('n', '<F4>', function() require('dap').close() require('dapui').close() end,
+                                                                           { desc = 'F4 -> close dap'}),
+    vim.keymap.set('n', '<F5>', function() require('dap').continue()  end, { desc = 'F5 -> run debuggger'}),
+    vim.keymap.set('n', '<F6>', function() require('dap').step_into() end, { desc = 'F6 -> step into'}),
+    vim.keymap.set('n', '<F7>', function() require('dap').step_over() end, { desc = 'F7 -> step over'}),
+    vim.keymap.set('n', '<F8>', function() require('dap').step_out()  end, { desc = 'F8 -> step out'}),
 
     vim.keymap.set('n', '<leader>b',  function() require('dap').toggle_breakpoint() end, { desc = 'leader b  -> toggle breakpoint'}),
+    vim.keymap.set('n', '<leader>gb',  function() require('dap').run_to_cursor() end, { desc = 'leader gb  -> run debugger, break at cursor'}),
     vim.keymap.set('n', '<leader>dr', function() require('dap').repl.open()         end, { desc = 'leader dr -> open repl'}),
 
     vim.keymap.set('n', '<leader>d',  function() require('dapui').toggle() end, {  silent = true, desc = 'leader d  -> toggle debug ui, does this automatically'}),
+
+    vim.keymap.set('n', '<leader>k',  function() require('dapui').eval(nil, {enter = true }) end,
+      {  silent = true, desc = 'leader k  -> show info about word under cursor'}),
 
   },
 
@@ -860,34 +888,64 @@ vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open float
 
 
 -- [[ configure neotree ]]
-Neotree_open = false
-Neotree_buf  = -1
-Neotree_win  = -1
-local function neotree_toggle()
-  -- print('neotree_open: '..tostring(Neotree_open)..', win: '..tostring(Neotree_win)..', buf: '..tostring(Neotree_buf))
 
-  -- if window already openend swicth to that window
-  -- else create new neotree window 
-  if Neotree_open and vim.api.nvim_win_is_valid(Neotree_win) and vim.api.nvim_buf_is_valid(Neotree_buf) then
-    vim.api.nvim_set_current_win(Neotree_win)
-  else
-    vim.cmd("tabnew")
-    Neotree_buf = vim.api.nvim_get_current_buf()
-    Neotree_win = vim.api.nvim_get_current_win()
-    vim.cmd("Neotree position=current")
-    Neotree_open = true
-    -- autoclose neotree on exiting
-    vim.api.nvim_create_autocmd('ExitPre', {
-      callback = function()
-        if Neotree_open and vim.api.nvim_win_is_valid(Neotree_win) and vim.api.nvim_buf_is_valid(Neotree_buf) then
-          vim.api.nvim_buf_delete(Neotree_buf)
-          vim.api.nvim_win_close(Neotree_win, true)
-        end
+-- -- old function used to open neotree in its own window
+-- Neotree_open = false
+-- Neotree_buf  = -1
+-- Neotree_win  = -1
+-- local function neotree_toggle()
+--   -- print('neotree_open: '..tostring(Neotree_open)..', win: '..tostring(Neotree_win)..', buf: '..tostring(Neotree_buf))
+-- 
+--   -- if window already openend swicth to that window
+--   -- else create new neotree window 
+--   if Neotree_open and vim.api.nvim_win_is_valid(Neotree_win) and vim.api.nvim_buf_is_valid(Neotree_buf) then
+--     vim.api.nvim_set_current_win(Neotree_win)
+--   else
+--     vim.cmd("tabnew")
+--     Neotree_buf = vim.api.nvim_get_current_buf()
+--     Neotree_win = vim.api.nvim_get_current_win()
+--     vim.cmd("Neotree position=current")
+--     Neotree_open = true
+--     -- autoclose neotree on exiting
+--     vim.api.nvim_create_autocmd('ExitPre', {
+--       callback = function()
+--         if Neotree_open and vim.api.nvim_win_is_valid(Neotree_win) and vim.api.nvim_buf_is_valid(Neotree_buf) then
+--           vim.api.nvim_buf_delete(Neotree_buf)
+--           vim.api.nvim_win_close(Neotree_win, true)
+--         end
+--       end
+--     })
+--   end
+-- end
+-- vim.keymap.set("n", "<C-d>", neotree_toggle, {  noremap = true, desc = ''})
+
+-- open neotree in float
+-- vim.keymap.set('n', '<C-d>', 'Neotree position=float toggle',
+--                { desc = "Open neo-tree in float" } )
+-- open neotree in float and expand to current file
+vim.keymap.set('n', '<C-d>', function()
+    local reveal_file = vim.fn.expand('%:p')
+    if (reveal_file == '') then
+      reveal_file = vim.fn.getcwd()
+    else
+      local f = io.open(reveal_file, "r")
+      if (f) then
+        f.close(f)
+      else
+        reveal_file = vim.fn.getcwd()
       end
+    end
+    require('neo-tree.command').execute({
+      -- action = "focus",          -- OPTIONAL, this is the default value
+      -- source = "filesystem",     -- OPTIONAL, this is the default value
+      position = "float",
+      reveal_file = reveal_file, -- path to file or folder to reveal
+      -- reveal_force_cwd = true,   -- change cwd without asking if needed
+      toggle = true,
     })
-  end
-end
-vim.keymap.set("n", "<C-d>", neotree_toggle, {  noremap = true, desc = ''})
+  end,
+  { desc = "Open neo-tree at current file or working directory" }
+)
 
 
 -- [[ Configure Telescope ]]
@@ -959,7 +1017,9 @@ vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?',       require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+-- vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+-- vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader><space>', require('telescope-tabs').list_tabs, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find( {} )
@@ -1222,19 +1282,37 @@ require("mason-nvim-dap").setup({ ensure_installed = { "cppdbg" } })
 -- set breakpoint char, see :h dap.txt -> SIGNS CONFIGURATION
 vim.fn.sign_define('DapBreakpoint', {text='🛑', texthl='', linehl='', numhl=''})
 -- open/close dap-ui automatically
+-- dont close if the debugged executable exited with error code
 local dap, dapui = require("dap"), require("dapui")
+_Dap_rtn_code = 0
 dap.listeners.before.attach.dapui_config = function()
   dapui.open()
+  _Dap_rtn_code = 0
 end
 dap.listeners.before.launch.dapui_config = function()
   dapui.open()
+  _Dap_rtn_code = 0
 end
 dap.listeners.before.event_terminated.dapui_config = function()
-  dapui.close()
+  if _Dap_rtn_code == 0 then
+    dapui.close()
+    -- require('fidget').notify("terminated")
+  end
 end
-dap.listeners.before.event_exited.dapui_config = function()
-  dapui.close()
+dap.listeners.before.event_exited.dapui_config = function(session, body)
+  -- print('Session terminated', vim.inspect(session), vim.inspect(body))
+  -- require('fidget').notify('Session terminated: '..vim.inspect(session)..", "..vim.inspect(body))
+  require('fidget').notify("exit code: "..body.exitCode)
+  _Dap_rtn_code = body.exitCode
+  if body.exitCode == 0 then
+    dapui.close()
+  else
+    dapui.open()
+  end
 end
+-- close dapui before closing so session doesnt save it
+vim.api.nvim_create_autocmd('ExitPre', { callback = function() dapui.close() end })
+
 -- setup dap adapters
 dap.adapters.cppdbg = {
   id = 'cppdbg',
@@ -1252,7 +1330,20 @@ dap.configurations.c = {
     type = "cppdbg",
     request = "launch",
     program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '\\_bin\\editor', 'file')
+      -- return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '\\_bin\\editor', 'file')
+      -- open executable specified in 'dap_path' file or promt for input
+      local f = io.open( vim.fn.getcwd().."\\dap_path", "rb")
+      if f then
+        local txt = f:read()
+        f:close()
+        -- vim.cmd("!build") -- call build command
+        -- vim.cmd("ToggleTerm<CR>build<CR>")
+        -- vim.api.nvim_command("!build")
+        require('fidget').notify("debugging: "..vim.fn.getcwd()..'\\'..txt)
+        return vim.fn.getcwd()..'\\'..txt
+      else
+        return vim.fn.input('Path to executable: ', vim.fn.getcwd()..'\\', 'file')
+      end
     end,
     cwd = '${workspaceFolder}',
     stopAtEntry = false,
