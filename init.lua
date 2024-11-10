@@ -1137,7 +1137,7 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
-  nmap('<leader>rn', vm.lsp.buf.rename, '[R]e[n]ame')
+  -- nmap('<leader>rn', vm.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', function()
     vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
   end, '[C]ode [A]ction')
