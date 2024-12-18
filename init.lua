@@ -1392,12 +1392,17 @@ dap.configurations.odin = dap.configurations.c -- @TODO: get this working
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
--- [[ gui nvim qt ]]
+-- [[ gui nvim qt / neovide / etc. ]]
 if vim.fn.has('gui_running') == 1 then
   require('fidget').notify( "vim.fn.has('gui_running'):"..vim.fn.has('gui_running') )
-  -- Neovide specific
+  -- Neovide specific [https://neovide.dev/configuration.html]
   if vim.g.neovide == true then
     vim.g.neovide_fullscreen = true
+    vim.g.neovide_confirm_quit = true
+    vim.g.neovide_profiler = false
+    vim.g.neovide_scroll_animation_length = 0.1
+    vim.g.neovide_cursor_animation_length = 0.025
+    vim.g.neovide_cursor_trail_size = 0.2
   end
   --require('session-lens').search_session()
   -- vim.api.nvim_create_autocmd('UIEnter', {
