@@ -1436,6 +1436,18 @@ if vim.g.neovide == true then
   -- vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true})
   -- vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true})
   -- vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true})
+
+  -- change scale
+  vim.g.neovide_scale_factor = 1.0
+  local change_scale_factor = function(delta)
+    vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
+  end
+  vim.keymap.set("n", "<C-+>", function()
+    change_scale_factor(1.1)
+  end)
+  vim.keymap.set("n", "<C-->", function()
+    change_scale_factor(0.9)
+  end)
 end
 
 
