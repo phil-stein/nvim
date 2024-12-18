@@ -61,6 +61,9 @@ vim.opt.rtp:prepend(lazypath)
 vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('fidget').notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
 vim.api.nvim_create_user_command('WQ', function() vim.cmd('wall | qall') end, {  desc = ':WQ -> :wall | :qall'})
 
+vim.api.nvim_create_user_command('Hex',   function() vim.cmd('%!xxd | set ft=xxd') require('fidget').notify(':Hex -> conv to hex')  end, {  desc = ':Hex -> %!xxd turns text to hex representation, activates syntax highlighting'})
+vim.api.nvim_create_user_command('Unhex', function() vim.cmd('%!xxd -r') require('fidget').notify(':Unhex -> conv to text')         end, {  desc = ':Unhex -> %!xxd -r turns hex representation to text'})
+
 -- [[ Configure plugins ]]
 -- NOTE: Here is where you install your plugins.
 --  You can configure plugins using the `config` key.
@@ -201,31 +204,52 @@ require('lazy').setup({
     end,
   },
 
-  { -- auto-session / session-management
+  -- { -- auto-session / session-management
+  --   'rmagatti/auto-session',
+  --   config = function()
+  --     require("auto-session").setup {
+  --       log_level = "error",
+  --       cwd_change_handling = {
+  --         restore_upcoming_session = true, -- already the default, no need to specify like this, only here as an example
+  --         pre_cwd_changed_hook = nil, -- already the default, no need to specify like this, only here as an example
+  --         post_cwd_changed_hook = function() -- example refreshing the lualine status line _after_ the cwd changes
+  --           require("lualine").refresh() -- refresh lualine so the new session name is displayed in the status bar
+  --         end,
+  --       },
+  --     }
+  --   end,
+  -- },
+  {
     'rmagatti/auto-session',
-    config = function()
-      require("auto-session").setup {
-        log_level = "error",
-        cwd_change_handling = {
-          restore_upcoming_session = true, -- already the default, no need to specify like this, only here as an example
-          pre_cwd_changed_hook = nil, -- already the default, no need to specify like this, only here as an example
-          post_cwd_changed_hook = function() -- example refreshing the lualine status line _after_ the cwd changes
-            require("lualine").refresh() -- refresh lualine so the new session name is displayed in the status bar
-          end,
+    lazy = false,
+    keys = {
+      -- Will use Telescope if installed or a vim.ui.select picker otherwise
+      { '<leader>S', '<cmd>SessionSearch<CR>', desc = 'Session search' },
+    },
+    opts = {
+      -- ⚠️ This will only work if Telescope.nvim is installed
+      -- The following are already the default values, no need to provide them if these are already the settings you want.
+      session_lens = {
+        -- If load_on_setup is false, make sure you use `:SessionSearch` to open the picker as it will initialize everything first
+        load_on_setup = true,
+        previewer = false,
+        mappings = {
+          -- Mode can be a string or a table, e.g. {"i", "n"} for both insert and normal mode
+          delete_session = { "i", "<C-D>" },
+          alternate_session = { "i", "<C-S>" },
+          copy_session = { "i", "<C-Y>" },
         },
-      }
-    end,
-  },
-  { -- session telsescope view
-    'rmagatti/session-lens',
-    dependencies = {'rmagatti/auto-session', 'nvim-telescope/telescope.nvim'},
-    config = function()
-      require('session-lens').setup({
-        --[[your custom config--]]
-        prompt_title = 'sessions',
-        path_display={'shorten'},
-      })
-    end
+        -- Can also set some Telescope picker options
+        -- For all options, see: https://github.com/nvim-telescope/telescope.nvim/blob/master/doc/telescope.txt#L112
+        theme_conf = {
+          border = true,
+          layout_config = {
+            width = 0.8, -- Can set width and height as percent of window
+            height = 0.8,
+          },
+        },
+      },
+    }
   },
 
   {
@@ -829,8 +853,7 @@ vim.cmd('set fillchars+=vert:\\ ')
 vim.o.guicursor = "r-cr-n-v-c-sm:block,i-ci-ve:ver25,o:hor20"
 
 -- set gui font, aka. for nvim-qt
--- @TODO: doesnt work
-vim.o.guifont   = "JetBrainsMono NFM Regular"
+vim.o.guifont = "JetBrainsMono Nerd Font Mono:h11"
 
 -- Set highlight on search
 vim.o.hlsearch = true
@@ -1044,7 +1067,8 @@ vim.keymap.set('n', '<leader>q',  require('telescope.builtin').diagnostics, { de
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume,      { desc = '[S]earch [R]esume' })
 
 -- [[ session-lens keymaps ]]
-vim.keymap.set('n', '<leader>S', require('session-lens').search_session,    { desc = 'search [S]essions' })
+-- vim.keymap.set('n', '<leader>S', require('session-lens').search_session,    { desc = 'search [S]essions' })
+vim.keymap.set('n', '<leader>S', '<cmd>SessionSearch<CR>',    { desc = 'search [S]essions' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -1137,7 +1161,7 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
-  -- nmap('<leader>rn', vm.lsp.buf.rename, '[R]e[n]ame')
+  nmap('<leader>r', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', function()
     vim.lsp.buf.code_action { context = { only = { 'quickfix', 'refactor', 'source' } } }
   end, '[C]ode [A]ction')
@@ -1149,7 +1173,7 @@ local on_attach = function(_, bufnr)
   nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
   nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-  nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+  nmap('<leader>ws', require('telescope.builtin').lsp_dynmic_workspace_symbols, '[W]orkspace [S]ymbols')
 
   -- See `:help K` for why this keymap
   -- done with "lewis6991/hover.nvim" now
@@ -1362,8 +1386,44 @@ dap.configurations.c = {
   -- },
 }
 dap.configurations.cpp = dap.configurations.c
+dap.configurations.odin = dap.configurations.c -- @TODO: get this working
 
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- [[ gui nvim qt ]]
+if vim.fn.has('gui_running') == 1 then
+  require('fidget').notify( "vim.fn.has('gui_running'):"..vim.fn.has('gui_running') )
+  -- Neovide specific
+  if vim.g.neovide == true then
+    vim.g.neovide_fullscreen = true
+  end
+  --require('session-lens').search_session()
+  -- vim.api.nvim_create_autocmd('UIEnter', {
+  vim.api.nvim_create_autocmd('VimEnter', {
+    callback = function()
+      -- vim.cmd("<cmd>SessionSearch<CR>")
+      vim.cmd("SessionSearch")
+      require('fidget').notify( "called session search")
+    end,
+    -- pattern = '*',
+  })
+end
+-- vim.keymap.set('n', '<c-w>f', ':call GuiWindowFullScreen((g:GuiWindowFullScreen + 1) % 2)<CR>', { desc= "toggle fullscreen" })
+-- vim.keymap.set('n', '<F11', ':call GuiWindowFullScreen((g:GuiWindowFullScreen + 1) % 2)<CR>', { desc= "toggle fullscreen" })
+-- Neovide specific
+if vim.g.neovide == true then
+    vim.keymap.set({'n'}, '<F11>',
+        function()
+            if vim.g.neovide_fullscreen == false then
+                vim.g.neovide_fullscreen = true
+            else
+                vim.g.neovide_fullscreen = false
+            end
+        end,
+        { silent = true }
+    )
+end
+
 

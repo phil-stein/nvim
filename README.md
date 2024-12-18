@@ -80,6 +80,8 @@ linux:
 - :Git or :G        -> git command
 - :WQ               -> :wqall, but works with terminals
 - :Doc ...          -> open floating window with [term_docs]() documentation
+- :Hex              -> %!xxd turns text to hex representation, activates syntax highlighting
+- :Unhex            -> %!xxd -r turns hex representation to text
 
 ## hotkeys
 - telescope
@@ -96,7 +98,7 @@ linux:
 - file browser
   - C-d						  -> toggle file broswer
 - lsp
-	- leader rn	  		-> rename
+	- leader r 	  		-> rename
 	- gd							-> goto defenition
 	- GD              -> open defenition in vsplit
 	- gD							-> goto declaration
