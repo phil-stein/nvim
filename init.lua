@@ -1395,15 +1395,6 @@ dap.configurations.odin = dap.configurations.c -- @TODO: get this working
 -- [[ gui nvim qt / neovide / etc. ]]
 if vim.fn.has('gui_running') == 1 then
   require('fidget').notify( "vim.fn.has('gui_running'):"..vim.fn.has('gui_running') )
-  -- Neovide specific [https://neovide.dev/configuration.html]
-  if vim.g.neovide == true then
-    vim.g.neovide_fullscreen = true
-    vim.g.neovide_confirm_quit = true
-    vim.g.neovide_profiler = false
-    vim.g.neovide_scroll_animation_length = 0.1
-    vim.g.neovide_cursor_animation_length = 0.025
-    vim.g.neovide_cursor_trail_size = 0.2
-  end
   --require('session-lens').search_session()
   -- vim.api.nvim_create_autocmd('UIEnter', {
   vim.api.nvim_create_autocmd('VimEnter', {
@@ -1415,9 +1406,7 @@ if vim.fn.has('gui_running') == 1 then
     -- pattern = '*',
   })
 end
--- vim.keymap.set('n', '<c-w>f', ':call GuiWindowFullScreen((g:GuiWindowFullScreen + 1) % 2)<CR>', { desc= "toggle fullscreen" })
--- vim.keymap.set('n', '<F11', ':call GuiWindowFullScreen((g:GuiWindowFullScreen + 1) % 2)<CR>', { desc= "toggle fullscreen" })
--- Neovide specific
+-- Neovide specific [https://neovide.dev/configuration.html]
 if vim.g.neovide == true then
     vim.keymap.set({'n'}, '<F11>',
         function()
@@ -1429,6 +1418,24 @@ if vim.g.neovide == true then
         end,
         { silent = true }
     )
+
+  vim.g.neovide_fullscreen = true
+  vim.g.neovide_confirm_quit = true
+  vim.g.neovide_profiler = false
+  vim.g.neovide_scroll_animation_length = 0.1
+  vim.g.neovide_cursor_animation_length = 0.025
+  vim.g.neovide_cursor_trail_size = 0.2
+
+  vim.keymap.set('v', '<C-c>', '"+y') -- Copy
+  vim.keymap.set('n', '<C-v>', '"+P') -- Paste normal mode
+  vim.keymap.set('v', '<C-v>', '"+P') -- Paste visual mode
+  vim.keymap.set('c', '<C-v>', '<C-R>+') -- Paste command mode
+  vim.keymap.set('i', '<C-v>', '<ESC>l"+Pli') -- Paste insert mode
+  -- -- Allow clipboard copy paste in neovim
+  -- vim.api.nvim_set_keymap('', '<D-v>', '+p<CR>', { noremap = true, silent = true})
+  -- vim.api.nvim_set_keymap('!', '<D-v>', '<C-R>+', { noremap = true, silent = true})
+  -- vim.api.nvim_set_keymap('t', '<D-v>', '<C-R>+', { noremap = true, silent = true})
+  -- vim.api.nvim_set_keymap('v', '<D-v>', '<C-R>+', { noremap = true, silent = true})
 end
 
 
