@@ -29,6 +29,9 @@ linux:
 - _deactivated_ [onedark](https://github.com/navarasu/onedark.nvim)
 - [catpuccin](https://github.com/catppuccin/nvim)
 
+## todo
+- LSP[<lsp-name>] error in vim/keymap.lua on startup
+
 ## plug-ins
 - [lazy.nvim](https://github.com/folke/lazy.nvim) | plug-in manager
 - [mason](https://github.com/williamboman/mason.nvim) | lsp-, linter-manager
