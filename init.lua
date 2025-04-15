@@ -582,7 +582,9 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim', opts = {},
+    dependencies = { 'echasnovski/mini.icons' },
+  },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -703,7 +705,10 @@ require('lazy').setup({
         lualine_z = { 'progress', 'location', 'vim.api.nvim_buf_line_count(0)'}
       },
       inactive_sections = {
-        lualine_a = { 'diagnostics', 'vim.fn.expand("%:.")' }, -- relative path
+        lualine_a = {}, -- cant use relative path in neovide for some reason
+        -- lualine_a = { 'diagnostics' }, -- cant use relative path in neovide for some reason
+        -- lualine_a = { 'diagnostics', 'vim.fn.expand("%:.")' }, -- relative path
+        -- lualine_a = { 'vim.fn.expand("%:.")' }, -- relative path
         lualine_b = {},
         lualine_c = {},
         lualine_x = { 'filetype', 'os.date("%I:%M", os.time())', 'location', 'vim.api.nvim_buf_line_count(0)' },
@@ -1195,22 +1200,49 @@ local on_attach = function(_, bufnr)
 end
 
 -- document existing key chains
-require('which-key').register {
-  ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-  ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-  ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
-  ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
-  ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-  ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-  ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-  ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+-- require('which-key').register {
+require('which-key').add{
+  { "<leader>c", group = "[C]ode" },
+  { "<leader>c_", hidden = true },
+  { "<leader>d", group = "[D]ocument" },
+  { "<leader>d_", hidden = true },
+  { "<leader>g", group = "[G]it" },
+  { "<leader>g_", hidden = true },
+  { "<leader>h", group = "Git [H]unk" },
+  { "<leader>h_", hidden = true },
+  { "<leader>r", group = "[R]ename" },
+  { "<leader>r_", hidden = true },
+  { "<leader>s", group = "[S]earch" },
+  { "<leader>s_", hidden = true },
+  { "<leader>t", group = "[T]oggle" },
+  { "<leader>t_", hidden = true },
+  { "<leader>w", group = "[W]orkspace" },
+  { "<leader>w_", hidden = true },
 }
+-- old which-key bindings
+-- {
+--   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
+--   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+--   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
+--   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+--   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
+--   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+--   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
+--   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+-- }
+
 -- register which-key VISUAL mode
 -- required for visual <leader>hs (hunk stage) to work
-require('which-key').register({
-  ['<leader>'] = { name = 'VISUAL <leader>' },
-  ['<leader>h'] = { 'Git [H]unk' },
-}, { mode = 'v' })
+-- require('which-key').register({
+require('which-key').add({
+  { "<leader>", group = "VISUAL <leader>", mode = "v" },
+  { "<leader>h", desc = "Git [H]unk", mode = "v" }, { mode = 'v' } })
+
+-- old which-key bindings
+-- {
+--   ['<leader>'] = { name = 'VISUAL <leader>' },
+--   ['<leader>h'] = { 'Git [H]unk' },
+-- }, { mode = 'v' })
 
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
