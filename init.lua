@@ -20,11 +20,15 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- tabs as spaces
-vim.o.tabstop     = 2     -- A TAB character looks like 4 spaces
-vim.o.expandtab   = true  -- Pressing the TAB key will insert spaces instead of a TAB character
-vim.o.softtabstop = 2     -- Number of spaces inserted instead of a TAB character
-vim.o.shiftwidth  = 2     -- Number of spaces inserted when indenting
-vim.o.scrolloff   = 8     -- offset from bottom/top when scrolling
+function Set_tabs_as_spaces()
+  vim.o.tabstop     = 2     -- A TAB character looks like 2 spaces
+  vim.o.expandtab   = true  -- Pressing the TAB key will insert spaces instead of a TAB character
+  vim.o.softtabstop = 2     -- Number of spaces inserted instead of a TAB character
+  vim.o.shiftwidth  = 2     -- Number of spaces inserted when indenting
+  vim.o.scrolloff   = 8     -- offset from bottom/top when scrolling
+end
+
+Set_tabs_as_spaces()
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
@@ -57,12 +61,28 @@ vim.opt.rtp:prepend(lazypath)
   vim.keymap.set('x', 'q:', '')
   vim.keymap.set('t', 'q:', '')
 
+  -- @NOTE: remap ctrl+left-/right-arrow
+  --        so it is more granular, 
+  --        see :h word-motions
+  vim.keymap.set('n', '<C-LEFT>',  'b' )
+  vim.keymap.set('n', '<C-RIGHT>', 'e' )
+  -- function ()
+  --   -- require( 'fidget' ).notify( 'cock' )
+  -- end )
+
 -- [[ custom commands ]]
 vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('fidget').notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
 vim.api.nvim_create_user_command('WQ', function() vim.cmd('wall | qall') end, {  desc = ':WQ -> :wall | :qall'})
 
 vim.api.nvim_create_user_command('Hex',   function() vim.cmd('%!xxd | set ft=xxd') require('fidget').notify(':Hex -> conv to hex')  end, {  desc = ':Hex -> %!xxd turns text to hex representation, activates syntax highlighting'})
 vim.api.nvim_create_user_command('Unhex', function() vim.cmd('%!xxd -r') require('fidget').notify(':Unhex -> conv to text')         end, {  desc = ':Unhex -> %!xxd -r turns hex representation to text'})
+
+-- [[ custom filetype extensions ]]
+vim.filetype.add({
+  pattern = {
+    ['.*.*.slang'] = 'slang',
+  },
+})
 
 -- [[ Configure plugins ]]
 -- NOTE: Here is where you install your plugins.
@@ -408,7 +428,18 @@ require('lazy').setup({
       }
     end,
 
-    vim.keymap.set('n', '<C-b>', ':ToggleTerm<CR>build<CR>', { silent = true , desc = "call build batch/bash file"}),
+    -- Ctrl - b -> build project or open in appropriate software
+    vim.keymap.set('n', '<C-b>',
+      function()
+        if (vim.bo.filetype == "markdown") then
+        require('fidget').notify( "filetype: "..vim.bo.filetype )
+          vim.cmd( ':Typora' )
+        else
+          -- vim.cmd( ':ToggleTerm<CR>build<CR>' )
+          vim.cmd( 'TermExec cmd="build"')
+        end
+      end,
+      { silent = true , desc = "call build batch/bash file or open .md files in typora"}),
   },
 
   { -- hover / K documentation popup
@@ -469,13 +500,16 @@ require('lazy').setup({
     -- vimwiki
     "vimwiki/vimwiki",
     init = function()
-        vim.g.vimwiki_list = {
-            {
-            path = '/workspace/vim/vimwiki',
-            syntax = 'default',
-            ext = '.wiki',
-            },
-        }
+      vim.g.vimwiki_list = {
+          {
+          path = '/workspace/vim/vimwiki',
+          syntax = 'default',
+          ext = '.wiki',
+          },
+      }
+      -- only use vimwiki inside '/workspace/vim/vimwiki'
+      -- otherwise all .md files end up as vimwiki files
+      vim.cmd("let g:vimwiki_global_ext = 0")
     end,
   },
 
@@ -500,9 +534,29 @@ require('lazy').setup({
     end,
 
     -- [[ dap / debugging keymap ]]
-    vim.keymap.set('n', '<F4>', function() require('dap').close() require('dapui').close() end,
-                                                                           { desc = 'F4 -> close dap'}),
-    vim.keymap.set('n', '<F5>', function() require('dap').continue()  end, { desc = 'F5 -> run debuggger'}),
+
+    vim.api.nvim_create_user_command('DapStop',
+      function()
+        require('dap').disconnect({ terminateDebuggee = true })
+      end,
+      {  nargs = 0, desc = ''}),
+
+    vim.keymap.set('n', '<F4>',
+      function()
+        require('dap').close() require('dapui').close()
+        require('dap').disconnect({ terminateDebuggee = true })
+      end,
+    { desc = 'F4 -> close dap'}),
+    -- vim.keymap.set('n', '<F5>',
+    --   function()
+    --     -- get the current coroutine
+    --     local coro = assert(coroutine.running())
+    --     coroutine.yield(function()
+    --       vim.api.nvim_command("TermExec build")
+    --     end)
+    --     require('dap').continue()
+    --   end, { desc = 'F5 -> run debuggger'}),
+    vim.keymap.set('n', '<F5>', function() require('dap').continue() end, { desc = 'F5 -> run debuggger'}),
     vim.keymap.set('n', '<F6>', function() require('dap').step_into() end, { desc = 'F6 -> step into'}),
     vim.keymap.set('n', '<F7>', function() require('dap').step_over() end, { desc = 'F7 -> step over'}),
     vim.keymap.set('n', '<F8>', function() require('dap').step_out()  end, { desc = 'F8 -> step out'}),
@@ -580,6 +634,18 @@ require('lazy').setup({
     -- end doc cmd
     vim.keymap.set('n', '<C-h>', ':Doc neovim-mappings<CR>', { silent = true, desc = "show neovim mappings"}),
   },
+  { -- typora | Typora, custom hotkey to open current file in typora
+    -- :Typora command
+    vim.api.nvim_create_user_command('Typora',
+      function()
+        -- vim.cmd( "!typora %" )
+        -- vim.cmd( ":ToggleTerm<CR>typora %<CR>" )
+        vim.cmd( 'TermExec cmd="Typora %"')
+        vim.cmd( "ToggleTerm" )
+      end,
+    {  nargs = 0, desc = ''}),
+  },
+
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {},
@@ -695,21 +761,22 @@ require('lazy').setup({
       },
       sections = { -- 'filename','encoding', 'fileformat', 
         lualine_a = {'mode'},
-        lualine_b = {'branch', 'diff', 'diagnostics', 'vim.fn.expand("%:.")'},
+        lualine_b = { 'branch', 'diff', 'diagnostics', 'vim.fn.expand("%:.")' },
         -- lualine_c = {'require("auto-session.lib").current_session_name())' },
-        lualine_c = {'string.sub( require("auto-session.lib").current_session_name(), 5)' },
+        lualine_c = { 'string.sub( require("auto-session.lib").current_session_name(), 5)' },
         -- lualine_c = {'vim.fn.expand("%:.")', 'require("auto-session.lib").current_session_name()', 'require("nvim_lsp").status()' }, 
 
         lualine_x = { 'filetype' },
         lualine_y = { 'os.date("%I:%M", os.time())' },
-        lualine_z = { 'progress', 'location', 'vim.api.nvim_buf_line_count(0)'}
+        lualine_z = { 'progress', 'location', 'vim.api.nvim_buf_line_count(0)' }
       },
       inactive_sections = {
         lualine_a = {}, -- cant use relative path in neovide for some reason
         -- lualine_a = { 'diagnostics' }, -- cant use relative path in neovide for some reason
         -- lualine_a = { 'diagnostics', 'vim.fn.expand("%:.")' }, -- relative path
         -- lualine_a = { 'vim.fn.expand("%:.")' }, -- relative path
-        lualine_b = {},
+        -- lualine_b = {},
+        lualine_b = { 'diff', 'diagnostics', 'vim.fn.expand("%:.")' },
         lualine_c = {},
         lualine_x = { 'filetype', 'os.date("%I:%M", os.time())', 'location', 'vim.api.nvim_buf_line_count(0)' },
         lualine_y = {},
@@ -824,6 +891,18 @@ vim.api.nvim_create_autocmd({'VimEnter', 'BufEnter'}, {
   group = highlight_group,
   pattern = '*',
 })
+
+-- force tabs as spaces on BufEnter, as some things like odinfmt change it i think
+vim.api.nvim_create_autocmd({'BufEnter'}, {
+-- vim.api.nvim_create_autocmd({'ColorScheme'}, {
+  callback = function()
+    Set_tabs_as_spaces()
+    require("fidget").notify( "BufEnter -> Set_tabs_as_spaces()" )
+  end,
+  -- group = highlight_group,
+  pattern = '*',
+})
+
 -- highlight cursorline in replace-mode
 vim.api.nvim_create_autocmd('ModeChanged', {
   callback = function()
@@ -1081,7 +1160,7 @@ vim.keymap.set('n', '<leader>S', '<cmd>SessionSearch<CR>',    { desc = 'search [
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'lua', 'vimdoc', 'vim', 'odin', 'glsl' }, -- 'gitignore', 'make', 'zig', 'bash', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'go'
+    ensure_installed = { 'c', 'cpp', 'lua', 'vimdoc', 'vim', 'odin', 'glsl', 'slang', 'markdown', 'markdown_inline', 'html', 'css' }, -- 'gitignore', 'make', 'zig', 'bash', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'go'
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -1174,6 +1253,7 @@ local on_attach = function(_, bufnr)
   vim.keymap.set('n', 'gd', require('telescope.builtin').lsp_definitions, { buffer=bufnr, desc='[G]oto [D]efinition' } )
   -- vim.keymap.set('n', 'GD', ":vsplit<CR>gd", "[G]oto [D]efinition, in vert split")
   vim.keymap.set('n', 'GD', ':vsplit | lua vim.lsp.buf.definition()<CR>', { buffer=bufnr, desc='[G]oto [D]efinition, in vsplit' } ) -- https://neovim.discourse.group/t/jump-to-definition-in-vertical-horizontal-split/2605/2
+  -- vim.keymap.set('n', '<leader>t', ':tabe | lua vim.lsp.buf.definition()<CR>', { buffer=bufnr, desc='[G]oto [D]efinition, in new tab' } ) -- https://neovim.discourse.group/t/jump-to-definition-in-vertical-horizontal-split/2605/2
   vim.keymap.set('n', 'gr', require('telescope.builtin').lsp_references, { buffer=bufnr, desc='[G]oto [R]eferences' } )
   vim.keymap.set('n', 'gI', require('telescope.builtin').lsp_implementations, { buffer=bufnr, desc='[G]oto [I]mplementation' } )
   vim.keymap.set('n', '<leader>D', require('telescope.builtin').lsp_type_definitions, { buffer=bufnr, desc='Type [D]efinition' } )
@@ -1392,7 +1472,10 @@ dap.configurations.c = {
       if f then
         local txt = f:read()
         f:close()
-        -- vim.cmd("!build") -- call build command
+        local coro = coroutine.create( function()
+          vim.cmd("!build no_run") -- call build command
+        end )
+        coroutine.resume( coro )
         -- vim.cmd("ToggleTerm<CR>build<CR>")
         -- vim.api.nvim_command("!build")
         require('fidget').notify("debugging: "..vim.fn.getcwd()..'\\'..txt)

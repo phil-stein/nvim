@@ -85,6 +85,7 @@ linux:
 - :Doc ...          -> open floating window with [term_docs]() documentation
 - :Hex              -> %!xxd turns text to hex representation, activates syntax highlighting
 - :Unhex            -> %!xxd -r turns hex representation to text
+- :Typora           -> poen current file in Typora
 
 ## hotkeys
 - telescope
@@ -132,6 +133,7 @@ linux:
   - leader dr      -> open repl,
   - leader d       -> open debug ui, opens automatically
   - leader d       -> show info about word under cursor
+  - :DapStop       -> stop debugging session
 - comment
   - gcc             -> line toggle comment
   - gbc             -> line toggle multiline-comment
