@@ -28,6 +28,7 @@ linux:
 ## themes
 - _deactivated_ [onedark](https://github.com/navarasu/onedark.nvim)
 - [catpuccin](https://github.com/catppuccin/nvim)
+  - :Theme -> switch light / dark 
 
 ## todo
 - LSP[<lsp-name>] error in vim/keymap.lua on startup

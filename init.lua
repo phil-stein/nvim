@@ -30,6 +30,9 @@ end
 
 Set_tabs_as_spaces()
 
+-- theme
+local active_theme_dark = true
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -73,6 +76,19 @@ vim.opt.rtp:prepend(lazypath)
 -- [[ custom commands ]]
 vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('fidget').notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
 vim.api.nvim_create_user_command('WQ', function() vim.cmd('wall | qall') end, {  desc = ':WQ -> :wall | :qall'})
+
+vim.api.nvim_create_user_command('Theme',
+  function()
+    if active_theme_dark then
+      vim.cmd.colorscheme('catppuccin-latte')
+        active_theme_dark = false
+    else
+      vim.cmd.colorscheme('catppuccin-frappe')
+        active_theme_dark = true
+    end
+    require('fidget').notify(':W -> saved all')
+  end,
+{  desc = ':Theme -> switch theme dark/light'})
 
 vim.api.nvim_create_user_command('Hex',   function() vim.cmd('%!xxd | set ft=xxd') require('fidget').notify(':Hex -> conv to hex')  end, {  desc = ':Hex -> %!xxd turns text to hex representation, activates syntax highlighting'})
 vim.api.nvim_create_user_command('Unhex', function() vim.cmd('%!xxd -r') require('fidget').notify(':Unhex -> conv to text')         end, {  desc = ':Unhex -> %!xxd -r turns hex representation to text'})
@@ -391,7 +407,7 @@ require('lazy').setup({
         --     guibg = "<VALUE-HERE>",
         --   },
         -- },
-        shade_terminals = false, -- NOTE: this option takes priority over highlights specified so if you specify Normal highlights you should set this to false
+        shade_terminals = true, -- NOTE: this option takes priority over highlights specified so if you specify Normal highlights you should set this to false
         -- shading_factor = '<number>', -- the percentage by which to lighten terminal background, default: -30 (gets multiplied by -3 if background is light)
         insert_mappings = true, -- whether or not the open mapping applies in insert mode
         terminal_mappings = true, -- whether or not the open mapping applies in the opened terminals
@@ -673,6 +689,7 @@ require('lazy').setup({
     config = function()
       require("catppuccin").setup {
         flavour = "frappe", -- latte, frappe, macchiato, mocha
+        -- flavour = "latte", -- latte, frappe, macchiato, mocha
         dim_inactive = {
           enabled = true, -- dims the background color of inactive window
           shade = "dark",
@@ -729,8 +746,23 @@ require('lazy').setup({
           which_key = true,
           lsp_trouble = true,
         },
-      }
-    vim.cmd.colorscheme("catppuccin")
+        term_colors = true,
+        -- terminal_overrides = {
+        --   all = function(C)
+        --     return {
+        --       terminal_color_3 = C.mauve,
+        --       terminal_color_11 = C.mauve,
+        --     }
+        --   end,
+        --   mocha = function(C)
+        --     return {
+        --       terminal_color_5 = C.pink,
+        --       terminal_color_13 = C.pink,
+        --     }
+        --   end,
+        -- },
+          }
+      vim.cmd.colorscheme("catppuccin")
     end,
     -- more custom highlighting after lazy-vim plugin stuff
   },
@@ -818,12 +850,6 @@ require('lazy').setup({
       },
     },
   },
-
-  -- {
-  --   -- [[ nerdtree | file browser ]]
-  --   'preservim/nerdtree',
-  --   vim.api.nvim_set_keymap("n","<C-d>", ":NERDTreeToggle<CR>", { noremap = true }),
-  -- },
   {
     -- [[ neotree | file browser ]]
     "nvim-neo-tree/neo-tree.nvim",
@@ -881,12 +907,15 @@ vim.api.nvim_create_autocmd({'VimEnter', 'BufEnter'}, {
 -- vim.api.nvim_create_autocmd({'ColorScheme'}, {
   callback = function()
     -- local frappe = require("catppuccin.palettes").get_palette("frappe")
-    vim.cmd.hi('lualine_a_inactive                     guibg=#252736')
-    vim.cmd.hi('lualine_b_inactive                     guibg=#252736')
-    vim.cmd.hi('lualine_c_inactive                     guibg=#252736')
-    vim.cmd.hi('lualine_x_filetype_DevIconLua_inactive guibg=#252736')
-    vim.cmd.hi('lualine_x_filetype_DevIconTxt_inactive guibg=#252736')
-    vim.cmd.hi('WinSeparator                           guibg=#252736')
+    if active_theme_dark then
+      vim.cmd.hi('lualine_a_inactive                     guibg=#252736')
+      vim.cmd.hi('lualine_b_inactive                     guibg=#252736')
+      vim.cmd.hi('lualine_c_inactive                     guibg=#252736')
+      vim.cmd.hi('lualine_x_filetype_DevIconLua_inactive guibg=#252736')
+      vim.cmd.hi('lualine_x_filetype_DevIconTxt_inactive guibg=#252736')
+      vim.cmd.hi('WinSeparator                           guibg=#252736')
+    -- else
+    end
   end,
   group = highlight_group,
   pattern = '*',
@@ -907,22 +936,39 @@ vim.api.nvim_create_autocmd({'BufEnter'}, {
 vim.api.nvim_create_autocmd('ModeChanged', {
   callback = function()
     local m = vim.api.nvim_get_mode()
-    local frappe = require("catppuccin.palettes").get_palette("frappe")
+    -- local frappe = require("catppuccin.palettes").get_palette("frappe")
     if m.mode == 'R' then
-      -- vim.cmd.hi('CursorLine guibg=#55262E') -- #guibg=#3b3f52
-      -- vim.cmd.hi('CursorLine guibg=#4E2D33') -- #guibg=#3b3f52
-      -- vim.cmd.hi('CursorLine guibg=#B13F52') -- #guibg=#3b3f52
-      vim.cmd.hi('CursorLine guibg=#8F3947') -- #guibg=#3b3f52
+      if active_theme_dark then
+        vim.cmd.hi('CursorLine guibg=#8F3947') -- #guibg=#3b3f52
+      else
+        vim.cmd.hi('CursorLine guibg=#e38191') -- guifg=#ffffff 
+      end
     elseif m.mode == 'i' then
-      vim.cmd.hi('CursorLine guibg=#3B3F5A') -- guifg=#ffffff 
+      if active_theme_dark then
+        vim.cmd.hi('CursorLine guibg=#3B3F5A') -- guifg=#ffffff 
+      else
+        vim.cmd.hi('CursorLine guibg=#CCCCCC') -- guifg=#ffffff 
+      end
     else
-      vim.cmd.hi('CursorLine guibg=#3b3f52') -- guifg=#ffffff 
+      if active_theme_dark then
+        vim.cmd.hi('CursorLine guibg=#3b3f52') -- guifg=#ffffff 
+      else
+        vim.cmd.hi('CursorLine guibg=#CCCCCC') -- guifg=#ffffff 
+      end
     end
     -- print(m.mode)
     -- require('fidget').notify("mode: "..m.mode)
   end,
   group = highlight_group,
   pattern = '*',
+})
+vim.api.nvim_create_autocmd({'VimEnter','BufEnter'}, {
+  callback = function()
+    vim.cmd( "set syntax=C" )
+    require("fidget").notify("set syntax to c")
+  end,
+  group = highlight_group,
+  pattern = '.sheet'
 })
 
 -- [[ Setting options ]]
@@ -947,6 +993,7 @@ vim.wo.number = true
 
 -- highlight cursor line 
 vim.wo.cursorline = true
+-- vim.wo.cursorline = false -- true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
