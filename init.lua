@@ -33,6 +33,9 @@ Set_tabs_as_spaces()
 -- theme
 local active_theme_dark = true
 
+-- theme
+local active_theme_dark = true
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
