@@ -72,9 +72,9 @@ vim.opt.rtp:prepend(lazypath)
   --        see :h word-motions
   vim.keymap.set('n', '<C-LEFT>',  'b' )
   vim.keymap.set('n', '<C-RIGHT>', 'e' )
-  -- function ()
-  --   -- require( 'fidget' ).notify( 'cock' )
-  -- end )
+
+  -- @NOTE: terminal keymaps / commands
+  vim.api.nvim_set_keymap( 't', '<ESC>', '<C-\\><C-n>', {noremap = true, desc = "return to normal mode from terminal insert mode"} )
 
 -- [[ custom commands ]]
 vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('fidget').notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
@@ -441,7 +441,6 @@ require('lazy').setup({
           enabled = false,
           name_formatter = function(term) --  term: Terminal
             return term.name
-            -- return "hello"
           end
         },
       }
