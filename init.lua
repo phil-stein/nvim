@@ -1378,7 +1378,7 @@ require('which-key').add({
 require('mason').setup()
 -- require('mason-lspconfig').setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "clangd", "ols", "lua_ls" },
+    ensure_installed = { "clangd", "ols", "lua_ls", "marksman" },
 }
 require('mason-lspconfig').setup_handlers {
   function (server_name) -- default handler (optional)
