@@ -100,6 +100,7 @@ linux:
 	- leader space    -> search open buffers
 	- leader /				-> search keyword, fuzzyfind
 	- leader gf			  -> search git files
+  - esc             -> enter normal mode when in terminal insert mode
 - file browser
   - C-d						  -> toggle file broswer
 - lsp
