@@ -1,4 +1,3 @@
-
 # neovim config
 
 config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) <br>
@@ -74,6 +73,7 @@ linux:
 - [auto-session](https://github.com/rmagatti/auto-session) | save and load sessions based on cwd
   - [session-lens](https://github.com/rmagatti/session-lens) | view sessions using telescope
 - [neotree](https://github.com/nvim-neo-tree/neo-tree.nvim) | file explorer
+- [render-markdon](https://github.com/MeanderingProgrammer/render-markdown.nvim/) | markdown styling in neovim
 
 ## commands
 - :Lazy             -> open plugin manager ui
@@ -86,7 +86,9 @@ linux:
 - :Doc ...          -> open floating window with [term_docs]() documentation
 - :Hex              -> %!xxd turns text to hex representation, activates syntax highlighting
 - :Unhex            -> %!xxd -r turns hex representation to text
-- :Typora           -> poen current file in Typora
+- :Typora           -> open current file in Typora
+- :Theme            -> switch theme light/dark
+- :MDtoggle         -> toggle render-markdown in current buffer
 
 ## hotkeys
 - telescope

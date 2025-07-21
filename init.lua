@@ -78,6 +78,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- [[ custom commands ]]
 vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('fidget').notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
+-- vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('notify')(':W -> saved all') end,        {  desc = ':W -> :wall'})
 vim.api.nvim_create_user_command('WQ', function() vim.cmd('wall | qall') end, {  desc = ':WQ -> :wall | :qall'})
 
 vim.api.nvim_create_user_command('Theme',
@@ -89,12 +90,15 @@ vim.api.nvim_create_user_command('Theme',
       vim.cmd.colorscheme('catppuccin-frappe')
         active_theme_dark = true
     end
-    require('fidget').notify(':W -> saved all')
+    require('fidget').notify(':Theme -> switched theme')
+    -- require('notify')('switched theme')
   end,
 {  desc = ':Theme -> switch theme dark/light'})
 
 vim.api.nvim_create_user_command('Hex',   function() vim.cmd('%!xxd | set ft=xxd') require('fidget').notify(':Hex -> conv to hex')  end, {  desc = ':Hex -> %!xxd turns text to hex representation, activates syntax highlighting'})
+-- vim.api.nvim_create_user_command('Hex',   function() vim.cmd('%!xxd | set ft=xxd') require('notify')(':Hex -> conv to hex')  end, {  desc = ':Hex -> %!xxd turns text to hex representation, activates syntax highlighting'})
 vim.api.nvim_create_user_command('Unhex', function() vim.cmd('%!xxd -r') require('fidget').notify(':Unhex -> conv to text')         end, {  desc = ':Unhex -> %!xxd -r turns hex representation to text'})
+-- vim.api.nvim_create_user_command('Unhex', function() vim.cmd('%!xxd -r') require('notify')(':Unhex -> conv to text')         end, {  desc = ':Unhex -> %!xxd -r turns hex representation to text'})
 
 -- [[ custom filetype extensions ]]
 vim.filetype.add({
@@ -109,7 +113,9 @@ vim.filetype.add({
 --
 --  You can also configure plugins after the setup call,
 --    as they will be available in your neovim runtime.
-require('lazy').setup({
+-- require('lazy').setup({
+require("lazy").setup({
+spec = {
   -- NOTE: First, some plugins that don't require any configuration
 
   -- Git related plugins
@@ -128,7 +134,9 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      {
+        'j-hui/fidget.nvim', opts = {  notification = { override_vim_notify = true } },
+      },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -238,6 +246,7 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          { name = 'render-markdown' },
         },
       }
     end,
@@ -451,6 +460,7 @@ require('lazy').setup({
       function()
         if (vim.bo.filetype == "markdown") then
         require('fidget').notify( "filetype: "..vim.bo.filetype )
+        -- require('notify')( "filetype: "..vim.bo.filetype )
           vim.cmd( ':Typora' )
         else
           -- vim.cmd( ':ToggleTerm<CR>build<CR>' )
@@ -658,6 +668,8 @@ require('lazy').setup({
       function()
         -- vim.cmd( "!typora %" )
         -- vim.cmd( ":ToggleTerm<CR>typora %<CR>" )
+        -- vim.cmd( 'TermExec cmd="taskkill /F /IM Typora.exe"')
+        vim.cmd( '!taskkill /F /IM Typora.exe')
         vim.cmd( 'TermExec cmd="Typora %"')
         vim.cmd( "ToggleTerm" )
       end,
@@ -769,11 +781,28 @@ require('lazy').setup({
     -- more custom highlighting after lazy-vim plugin stuff
   },
 
-  { -- change line number to reflect current mode
+  -- { -- change line number to reflect current mode
+  --   'mawkler/modicator.nvim',
+  --   config = function()
+  --     require('modicator').setup()
+  --   end
+  -- },
+  {
     'mawkler/modicator.nvim',
-    config = function()
-      require('modicator').setup()
-    end
+    dependencies = "catppuccin/nvim", -- Add your colorscheme plugin here
+    init = function()
+      -- These are required for Modicator to work
+      vim.o.cursorline = true
+      vim.o.number = true
+      vim.o.termguicolors = true
+    end,
+    opts = {
+      -- Warn if any required option above is missing. May emit false positives
+      -- if some other plugin modifies them, which in that case you can just
+      -- ignore. Feel free to remove this line after you've gotten Modicator to
+      -- work properly.
+      show_warnings = true,
+    }
   },
 
   {
@@ -866,6 +895,17 @@ require('lazy').setup({
   },
 
   {
+    'MeanderingProgrammer/render-markdown.nvim',
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dont ave above, have the two below
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
+  },
+
+  {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
@@ -888,8 +928,17 @@ require('lazy').setup({
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   -- { import = 'custom.plugins' },
-}, {})
+  },
 
+  rocks = {
+    hererocks = false,
+    enabled = false
+  },
+})
+
+-- [[ end, stop lazy | stop plugin config ]]
+
+-- vim.notify = require('fidget').notify
 
 -- [[ custom highlights ]] 
 -- doesnt work setting it in catppuccin directly
@@ -929,6 +978,7 @@ vim.api.nvim_create_autocmd({'BufEnter'}, {
   callback = function()
     Set_tabs_as_spaces()
     require("fidget").notify( "BufEnter -> Set_tabs_as_spaces()" )
+    -- require("notify")( "BufEnter -> Set_tabs_as_spaces()" )
   end,
   -- group = highlight_group,
   pattern = '*',
@@ -968,6 +1018,7 @@ vim.api.nvim_create_autocmd({'VimEnter','BufEnter'}, {
   callback = function()
     vim.cmd( "set syntax=C" )
     require("fidget").notify("set syntax to c")
+    -- require("notify")("set syntax to c")
   end,
   group = highlight_group,
   pattern = '.sheet'
@@ -1041,6 +1092,76 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 -- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+-- [[ configure render-markdown ]]
+
+require('render-markdown').setup({
+  completions = { lsp = { enabled = true }, },
+  -- render_modes = { 'n', 't' }, -- normal-, terminal mode gets rendered as md, also: 'c': command-mode, 'i': insert-mode
+  render_modes = true, -- all modes get rendered as md
+  pipe_table = {
+    -- Additional modes to render pipe tables.
+    render_modes = { 'heavy' },
+    -- Pre configured settings largely for setting table border easier.
+    -- | heavy  | use thicker border characters     |
+    -- | double | use double line border characters |
+    -- | round  | use round border corners          |
+    -- | none   | does nothing                      |
+    preset = 'none',
+    -- Determines how the table as a whole is rendered.
+    -- | none   | disables all rendering                                                  |
+    -- | normal | applies the 'cell' style rendering to each row of the table             |
+    -- | full   | normal + a top & bottom line that fill out the table when lengths match |
+    style = 'full',
+    cell = 'trimmed',
+  },
+  heading = {
+    -- icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+    -- icons = { '󰎦 ', '󰎩 ', '󰎬 ', '󰎮 ', '󰎰 ', '󰎸 ' },
+    -- icons = { '󰎤 ', '󰎧 ', '󰎪 ', '󰎭 ', '󰎱 ', '󰎳 ' },
+    -- icons = { '󰲠 ', '󰲢 ', '󰲤 ', '󰲦 ', '󰲨 ', '󰲪 ' },
+    -- icons = { '󰼏 ', '󰼐 ', '󰼑 ', '󰼒 ', '󰼓 ', '󰼔 ' },
+    -- icons = { 'X ' ,'󰎨 ', '󰎫 ', '󰎲 ', '󰎯 ', '󰎴 ' },
+    -- icons = { '󰉫 ', '󰉬 ', '󰉭 ', '󰉮 ', '󰉯 ', '󰉰 ' },
+    -- icons = { '󰶀 ', '󰶁 ', '󰶂 ', 'X ', 'X ', 'X ' },
+    icons = { '󰬺 ', '󰬻 ', '󰬼 ', '󰬽 ', '󰬾 ', '󰬿 ' },
+    -- icons = { '󰫶 ', '󱂉 ', '󱂊 ', '󱂋 ', 'V ', '󱂍 ' },
+    -- icons = { '󱪼 ', '󱪽 ', '󱪾 ', '󱪿 ', '󱫀 ', '󱫀󱪼' },
+    --  󰉳 󰉴 󰛼 
+    --       󰋼 󰽁 󰋽 󰙎 󱁯
+
+    signs = { '󰫎 ' },
+
+    width = 'block',
+    left_pad = 2,
+    right_pad = 4,
+    border = true,
+    border_virtual = true,
+  },
+  code = {
+    language_border = ' ',
+    language_left = '',
+    language_right = '',
+  },
+  checkbox = { checked = { scope_highlight = '@markup.strikethrough' } },
+  quote = { repeat_linebreak = true },
+  bullet = {
+    icons = { '' }, -- { '●', '○', '◆', '◇' },      
+    highlight = 'RenderMarkdownUnchecked',
+  },
+})
+vim.api.nvim_create_user_command('MDtoggle',  function() require('render-markdown').toggle() require('fidget').notify(':MDtoggle -> toggled render-markdown') end, {  desc = ':MDtoggle -> toggled render-markdown'})
+
+-- -- [[ configure fidget | output print() to fidget notify ]]
+-- @NOTE: screws some stuff up, would need to output to both print and fidget
+-- print = function(...)
+--     local print_safe_args = {}
+--     local _ = { ... }
+--     for i = 1, #_ do
+--         table.insert(print_safe_args, tostring(_[i]))
+--     end
+--     require('fidget').notify(table.concat(print_safe_args, ' '), "info")
+-- end
 
 
 -- [[ configure neotree ]]
@@ -1135,41 +1256,41 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
--- Telescope live_grep in git root
--- Function to find the git root directory based on the current buffer's path
-local function find_git_root()
-  -- Use the current buffer's path as the starting point for the git search
-  local current_file = vim.api.nvim_buf_get_name(0)
-  local current_dir
-  local cwd = vim.fn.getcwd()
-  -- If the buffer is not associated with a file, return nil
-  if current_file == '' then
-    current_dir = cwd
-  else
-    -- Extract the directory from the current file's path
-    current_dir = vim.fn.fnamemodify(current_file, ':h')
-  end
-
-  -- Find the Git root directory from the current file's path
-  local git_root = vim.fn.systemlist('git -C ' .. vim.fn.escape(current_dir, ' ') .. ' rev-parse --show-toplevel')[1]
-  if vim.v.shell_error ~= 0 then
-    print 'Not a git repository. Searching on current working directory'
-    return cwd
-  end
-  return git_root
-end
-
--- Custom live_grep function to search in git root
-local function live_grep_git_root()
-  local git_root = find_git_root()
-  if git_root then
-    require('telescope.builtin').live_grep {
-      search_dirs = { git_root },
-    }
-  end
-end
-
-vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
+-- -- Telescope live_grep in git root
+-- -- Function to find the git root directory based on the current buffer's path
+-- local function find_git_root()
+--   -- Use the current buffer's path as the starting point for the git search
+--   local current_file = vim.api.nvim_buf_get_name(0)
+--   local current_dir
+--   local cwd = vim.fn.getcwd()
+--   -- If the buffer is not associated with a file, return nil
+--   if current_file == '' then
+--     current_dir = cwd
+--   else
+--     -- Extract the directory from the current file's path
+--     current_dir = vim.fn.fnamemodify(current_file, ':h')
+--   end
+-- 
+--   -- Find the Git root directory from the current file's path
+--   local git_root = vim.fn.systemlist('git -C ' .. vim.fn.escape(current_dir, ' ') .. ' rev-parse --show-toplevel')[1]
+--   if vim.v.shell_error ~= 0 then
+--     print 'Not a git repository. Searching on current working directory'
+--     return cwd
+--   end
+--   return git_root
+-- end
+--
+-- -- Custom live_grep function to search in git root
+-- local function live_grep_git_root()
+--   local git_root = find_git_root()
+--   if git_root then
+--     require('telescope.builtin').live_grep {
+--       search_dirs = { git_root },
+--     }
+--   end
+-- end
+-- 
+-- vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?',       require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
@@ -1181,20 +1302,20 @@ vim.keymap.set('n', '<leader>/', function()
   require('telescope.builtin').current_buffer_fuzzy_find( {} )
 end, { desc = '[/] Fuzzily search in current buffer' })
 
-local function telescope_live_grep_open_files()
-  require('telescope.builtin').live_grep {
-    grep_open_files = true,
-    prompt_title = 'live grep in open files',
-  }
-end
-vim.keymap.set('n', '<leader>s/', telescope_live_grep_open_files,           { desc = '[S]earch [/] in Open Files' })
+-- local function telescope_live_grep_open_files()
+--   require('telescope.builtin').live_grep {
+--     grep_open_files = true,
+--     prompt_title = 'live grep in open files',
+--   }
+-- end
+-- vim.keymap.set('n', '<leader>s/', telescope_live_grep_open_files,           { desc = '[S]earch [/] in Open Files' })
 vim.keymap.set('n', '<leader>ss', require('telescope.builtin').builtin,     { desc = '[S]earch [S]elect Telescope' })
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files,   { desc = 'Search [G]it [F]iles' })
 vim.keymap.set('n', '<leader>f',  require('telescope.builtin').find_files,  { desc = 'search [F]iles' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags,   { desc = '[S]earch [H]elp' })
-vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep,   { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>',                   { desc = '[S]earch by [G]rep on Git Root' })
+-- vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
+-- vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep,   { desc = '[S]earch by [G]rep' })
+-- vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>',                   { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>q',  require('telescope.builtin').diagnostics, { desc = 'search diagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume,      { desc = '[S]earch [R]esume' })
@@ -1209,7 +1330,7 @@ vim.keymap.set('n', '<leader>S', '<cmd>SessionSearch<CR>',    { desc = 'search [
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'lua', 'vimdoc', 'vim', 'odin', 'glsl', 'slang', 'markdown', 'markdown_inline', 'html', 'css' }, -- 'gitignore', 'make', 'zig', 'bash', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'go'
+    ensure_installed = { 'c', 'cpp', 'lua', 'vimdoc', 'vim', 'odin', 'glsl', 'slang', 'markdown', 'markdown_inline', 'mermaid', 'html', 'css' }, -- 'gitignore', 'make', 'zig', 'bash', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'go', 'latex'
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -1378,13 +1499,14 @@ require('which-key').add({
 require('mason').setup()
 -- require('mason-lspconfig').setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "clangd", "ols", "lua_ls", "marksman" },
+    ensure_installed = { "clangd", "ols", "lua_ls" },
 }
-require('mason-lspconfig').setup_handlers {
-  function (server_name) -- default handler (optional)
-      require("lspconfig")[server_name].setup {}
-  end,
-}
+-- @NOTE: i think this was deprecated, was null, idk
+-- require('mason-lspconfig').setup_handlers {
+--   function (server_name) -- default handler (optional)
+--       require("lspconfig")[server_name].setup {}
+--   end,
+-- }
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -1397,10 +1519,6 @@ require('mason-lspconfig').setup_handlers {
 local servers = {
   -- clangd = {},
   -- ols    = {},
-  -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
 
   lua_ls = {
@@ -1431,17 +1549,18 @@ mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
 
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-      filetypes = (servers[server_name] or {}).filetypes,
-      icons_enabled = true,
-    }
-  end,
-}
+-- @NOTE: i think this was deprecated, was null, idk
+-- mason_lspconfig.setup_handlers {
+--   function(server_name)
+--     require('lspconfig')[server_name].setup {
+--       capabilities = capabilities,
+--       on_attach = on_attach,
+--       settings = servers[server_name],
+--       filetypes = (servers[server_name] or {}).filetypes,
+--       icons_enabled = true,
+--     }
+--   end,
+-- }
 
 -- lsp diagnostic display settings
 vim.diagnostic.config({
@@ -1458,7 +1577,7 @@ for type, icon in pairs(signs) do
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
 
--- [[ dap ]] 
+-- [[ configure dap ]] 
 
 require("mason-nvim-dap").setup({ ensure_installed = { "cppdbg" } })
 -- require("dapui").setup()
@@ -1485,9 +1604,10 @@ dap.listeners.before.event_terminated.dapui_config = function()
   end
 end
 dap.listeners.before.event_exited.dapui_config = function(session, body)
-  -- print('Session terminated', vim.inspect(session), vim.inspect(body))
-  -- require('fidget').notify('Session terminated: '..vim.inspect(session)..", "..vim.inspect(body))
+  -- -- print('Session terminated', vim.inspect(session), vim.inspect(body))
+  -- -- require('fidget').notify('Session terminated: '..vim.inspect(session)..", "..vim.inspect(body))
   require('fidget').notify("exit code: "..body.exitCode)
+  -- require('notify')("exit code: "..body.exitCode)
   _Dap_rtn_code = body.exitCode
   if body.exitCode == 0 then
     dapui.close()
@@ -1528,6 +1648,7 @@ dap.configurations.c = {
         -- vim.cmd("ToggleTerm<CR>build<CR>")
         -- vim.api.nvim_command("!build")
         require('fidget').notify("debugging: "..vim.fn.getcwd()..'\\'..txt)
+        -- require('notify')("debugging: "..vim.fn.getcwd()..'\\'..txt)
         return vim.fn.getcwd()..'\\'..txt
       else
         return vim.fn.input('Path to executable: ', vim.fn.getcwd()..'\\', 'file')
@@ -1556,20 +1677,24 @@ dap.configurations.odin = dap.configurations.c -- @TODO: get this working
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
--- [[ gui nvim qt / neovide / etc. ]]
+-- [[ configure gui nvim qt / neovide / etc. ]]
 if vim.fn.has('gui_running') == 1 then
   require('fidget').notify( "vim.fn.has('gui_running'):"..vim.fn.has('gui_running') )
-  --require('session-lens').search_session()
+  -- require('notify')( "vim.fn.has('gui_running'):"..vim.fn.has('gui_running') )
+  --require('session-lens').search_sWession()
   -- vim.api.nvim_create_autocmd('UIEnter', {
-  vim.api.nvim_create_autocmd('VimEnter', {
-    callback = function()
-      -- vim.cmd("<cmd>SessionSearch<CR>")
-      vim.cmd("SessionSearch")
-      require('fidget').notify( "called session search")
-    end,
-    -- pattern = '*',
-  })
 end
+
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    -- vim.cmd("<cmd>SessionSearch<CR>")
+    vim.cmd("SessionSearch")
+    require('fidget').notify( "called session search")
+    -- require('notify')( "called session search")
+  end,
+  -- pattern = '*',
+})
+
 -- Neovide specific [https://neovide.dev/configuration.html]
 if vim.g.neovide == true then
     vim.keymap.set({'n'}, '<F11>',
@@ -1586,9 +1711,16 @@ if vim.g.neovide == true then
   vim.g.neovide_fullscreen = true
   vim.g.neovide_confirm_quit = true
   vim.g.neovide_profiler = false
-  vim.g.neovide_scroll_animation_length = 0.1
-  vim.g.neovide_cursor_animation_length = 0.025
-  vim.g.neovide_cursor_trail_size = 0.2
+  vim.g.neovide_scroll_animation_length = 0.1 -- 0.1
+  vim.g.neovide_cursor_animation_length = 0.05 -- 0.025
+  vim.g.neovide_cursor_trail_size = 0.4 -- 0.1 -- 0.2 -- @UNSURE: if this still does anything since update 0.13.3 -> 0.15.1
+  vim.g.neovide_cursor_antialiasing = true
+  vim.g.neovide_cursor_animate_command_line = false
+
+  -- @BUG: doesnt work
+  vim.g.neovide_floating_blur_amount_x = 2.0
+  vim.g.neovide_floating_blur_amount_y = 2.0
+  vim.g.neovide_floating_corner_radius = 10.0
 
   vim.keymap.set('v', '<C-c>', '"+y') -- Copy
   vim.keymap.set('n', '<C-v>', '"+P') -- Paste normal mode
