@@ -969,11 +969,11 @@ local function open_popup()
       },
     },
     buf_options = {
-      modifiable = false,
+      modifiable = true,
       readonly = false,
     },
     win_options = {
-      winblend = 10,
+      winblend = 0,
       -- winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
       winhighlight = "Normal:Normal,FloatBorder:Normal",
     },
@@ -1022,15 +1022,24 @@ vim.api.nvim_create_user_command('Term',
         require('fidget').notify( "count: "..count )
         if count > 0 then
           local str = table.concat(opts.fargs)
-          -- for a in pairs(opts.fargs) do str = str..a end
-          -- print( "args: "..opts.fargs )
-          -- require('fidget').notify( "args: "..opts.fargs )
-          -- vim.cmd( 'normal! '..opts.fargs )
           print( "args: "..str )
           require('fidget').notify( "args: "..str )
           -- vim.cmd( 'normal! '..str )
           -- vim.cmd( 'append|'..str )
-          -- vim.api.nvim_set_current_line(str)
+          vim.cmd( 'set modifiable' )
+          -- vim.cmd( 'append|cock')
+          -- vim.api.nvim_set_current_line( 'cock' )
+          
+          vim.cmd( 'startinsert' )
+          vim.cmd( 'g$' ) -- goto end of line
+          local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+          require('fidget').notify( 'col: '..col..', row: '..row )
+          -- Notice the uuid is given as an array parameter, you can pass multiple strings.
+          -- Params 2-5 are for start and end of row and columns.
+          -- See earlier docs for param clarification or `:help nvim_buf_set_text.
+          -- vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { 'big-pp-pebble-collection' })
+          vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { 'big-pp-pebble-collection' })
+          -- vim.api.nvim_buf_set_text(0, row -1, col, row + string.len(str), col, { 'big-pp-pebble-collection' })
         end
       end
     end
@@ -1041,10 +1050,23 @@ vim.api.nvim_create_user_command('Term',
     -- vim.cmd('startinsert')
 
   end,
-  {  nargs = '*', desc = ''})
+{ nargs = '*', desc = ''})
 -- end doc cmd
 vim.keymap.set('n', '<C-t>', function() vim.cmd('Term') end, { silent = true, desc = ":Term -> open/close terminal"})
 vim.keymap.set('t', '<C-t>', function() vim.cmd('Term') end, { silent = true, desc = ":Term -> open/close terminal"})
+
+-- -- @TMP:
+vim.api.nvim_create_usercommand( 'Test',
+  function(opts)
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    require('fidget').notify( 'col: '..col..', row: '..row )
+    -- Notice the uuid is given as an array parameter, you can pass multiple strings.
+    -- Params 2-5 are for start and end of row and columns.
+    -- See earlier docs for param clarification or `:help nvim_buf_set_text.
+    -- vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { 'big-pp-pebble-collection' })
+    vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { 'big-pp-pebble-collection' })
+  end,
+  { nargs = '*', desc = ''})
 
 -- [[ Ctrl - b -> build project or open in appropriate software ]]
 vim.keymap.set('n', '<C-b>',
@@ -1464,6 +1486,7 @@ vim.keymap.set('n', '<leader>q',  require('telescope.builtin').diagnostics, { de
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume,      { desc = '[S]earch [R]esume' })
 
 -- [[ session-lens keymaps ]]
+vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 -- vim.keymap.set('n', '<leader>S', require('session-lens').search_session,    { desc = 'search [S]essions' })
 vim.keymap.set('n', '<leader>S', '<cmd>SessionSearch<CR>',    { desc = 'search [S]essions' })
 
@@ -1473,7 +1496,7 @@ vim.keymap.set('n', '<leader>S', '<cmd>SessionSearch<CR>',    { desc = 'search [
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'lua', 'vimdoc', 'vim', 'odin', 'glsl', 'slang', 'markdown', 'markdown_inline', 'mermaid', 'html', 'css' }, -- 'gitignore', 'make', 'zig', 'bash', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'go', 'latex'
+    ensure_installed = { 'c', 'cpp', 'lua', 'vim', 'odin', 'glsl', 'slang', 'markdown', 'markdown_inline', 'mermaid', 'html', 'css' }, -- , 'vimdoc', 'gitignore', 'make', 'zig', 'bash', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'go', 'latex'
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
