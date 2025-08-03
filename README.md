@@ -89,6 +89,7 @@ linux:
 - :Typora           -> open current file in Typora
 - :Theme            -> switch theme light/dark
 - :MDtoggle         -> toggle render-markdown in current buffer
+- :Term <opt-cmd>   -> toggle terminal, with optional command
 
 ## hotkeys
 - telescope
