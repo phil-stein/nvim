@@ -3,6 +3,9 @@
 -- [[ custom terminal ]]
 --
 
+local term = {}
+local py_term = {}
+
 local popup_open = false
 local popup = nil
 local function open_popup()
@@ -43,7 +46,12 @@ local function open_popup()
   -- popup:mount()
   popup:show()
   popup_open = true
-  -- _close popup when leaving it
+  
+  vim.cmd('terminal')
+  local buf = api.nvim_get_current_buf()
+  local job_id = vim.b[buf].terminal_job_id,
+
+  p  -- _close popup when leaving it
   local event = require("nui.utils.autocmd").event
   popup:on({ event.BufLeave, event.BufHidden },
     function()
@@ -55,18 +63,16 @@ local function open_popup()
       popup:unmount()
     end, { once = true })
 
-  -- popup:map("t", "<leader>t", function() vim.cmd('q!') popup:unmount() end)
-  -- popup:map( 't', "<C-f>", function() popup:hide() end )
-  -- popup:map( 'n', "<C-f>", function() popup:hide() end )
-
-  -- vim.cmd('terminal')
-  local jobID = vim.fn.jobstart( 'cmd', { pty = true } )
+  -- local jobID = vim.fn.jobstart( 'cmd', { pty = true } )
   vim.cmd('startinsert')
+
+  return { buf=buf, job_id=job_id }
 end
+
 vim.api.nvim_create_user_command('Term',
   function(opts)
     if popup == nil then
-      open_popup()
+      term = open_popup()
       popup_open = true
     elseif popup_open then
       popup:hide()
@@ -98,6 +104,7 @@ vim.api.nvim_create_user_command('Term',
           -- -- Params 2-5 are for start and end of row and columns.
           -- -- See earlier docs for param clarification or `:help nvim_buf_set_text.
           -- vim.api.nvim_buf_set_text(0, row -1, col +1, row -1, col +1, { str })
+          term_send( term.job_id, str )
         end
       end
     end
@@ -113,18 +120,12 @@ vim.api.nvim_create_user_command('Term',
 vim.keymap.set('n', '<C-t>', function() vim.cmd('Term') end, { silent = true, desc = ":Term -> open/close terminal"})
 vim.keymap.set('t', '<C-t>', function() vim.cmd('Term') end, { silent = true, desc = ":Term -> open/close terminal"})
 
--- -- @TMP:
-vim.api.nvim_create_user_command( 'Test',
-  function()
-    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-    require('fidget').notify( 'col: '..col..', row: '..row )
-    -- Notice the uuid is given as an array parameter, you can pass multiple strings.
-    -- Params 2-5 are for start and end of row and columns.
-    -- See earlier docs for param clarification or `:help nvim_buf_set_text.
-    -- vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { 'big-pp-pebble-collection' })
-    vim.api.nvim_buf_set_text(0, row - 1, col+1, row - 1, col+1, { 'big-pp-pebble-collection' })
-  end,
-  { nargs = '*', desc = ''})
+local function term_send(job_id, cmd)
+  cmd = type(cmd) == "table" and with_cr(self.newline_chr, unpack(cmd))
+    or with_cr(self.newline_chr, cmd --[[@as string]])
+  vim.fn.chansend(job_id, cmd)
+end
+
 
 -- [[ Ctrl - b -> build project or open in appropriate software ]]
 vim.keymap.set('n', '<C-b>',
