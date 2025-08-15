@@ -90,6 +90,12 @@ linux:
 - :Theme            -> switch theme light/dark
 - :MDtoggle         -> toggle render-markdown in current buffer
 - :Term <opt-cmd>   -> toggle terminal, with optional command
+- :TermPy           -> toggle pyton terminal
+- :TermSptfy        -> toggle spotify terminal
+- :Spell            -> toggled spellchecking
+- :SpellEn          -> activated spellchecking en
+- :SpellDe          -> activated spellchecking de
+
 
 ## hotkeys
 - telescope
@@ -115,10 +121,11 @@ linux:
 	- leader D				-> goto type defenition
   - leader e        -> show diagnostic message
   - leader q        -> show diagnostic message list
-- float-term 
+- term 
 	- C-t	            -> toggle terminal
 	- C-b						  -> run build   | for running build batch / bash / powershell file
-	- _disabled_ C-B						-> run build - | can check in batch file for arg and build different proj
+	- C-p	            -> toggle python terminal
+	- C-s	            -> toggle spotify terminal
 - code-completion
 	- CR						  -> accept completion
 	- Tab		  			  -> cycle through completions
@@ -144,4 +151,6 @@ linux:
   - gbc             -> line toggle multiline-comment
   - gc in visual m. -> tine toggle comment
   - gb in visual m. -> line toggle multiline-comment
+- nvim spellchecking
+  - z=              -> show list of potential correct words
 

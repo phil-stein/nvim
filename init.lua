@@ -29,9 +29,7 @@ function Set_tabs_as_spaces()
 end
 
 Set_tabs_as_spaces()
-
--- theme
-local active_theme_dark = true
+-- vim.o.winborder = "rounded" -- @NOTE: this screws with all the windows thtas already have borders on them
 
 -- theme
 local active_theme_dark = true
@@ -77,9 +75,10 @@ vim.opt.rtp:prepend(lazypath)
   vim.api.nvim_set_keymap( 't', '<ESC>', '<C-\\><C-n>', {noremap = true, desc = "return to normal mode from terminal insert mode"} )
 
 -- [[ custom commands ]]
-vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('fidget').notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
+-- vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('fidget').notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
+vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') vim.notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
 -- vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('notify')(':W -> saved all') end,        {  desc = ':W -> :wall'})
-vim.api.nvim_create_user_command('WQ', function() vim.cmd('wall | qall') end, {  desc = ':WQ -> :wall | :qall'})
+vim.api.nvim_create_user_command('WQ', function() vim.cmd('wall | qall') vim.notify(':WQ -> saved all then quit') end, {  desc = ':WQ -> :wall | :qall'})
 
 vim.api.nvim_create_user_command('Theme',
   function()
@@ -90,15 +89,22 @@ vim.api.nvim_create_user_command('Theme',
       vim.cmd.colorscheme('catppuccin-frappe')
         active_theme_dark = true
     end
-    require('fidget').notify(':Theme -> switched theme')
+    -- require('fidget').notify(':Theme -> switched theme')
+    vim.notify(':Theme -> switched theme')
     -- require('notify')('switched theme')
   end,
 {  desc = ':Theme -> switch theme dark/light'})
 
-vim.api.nvim_create_user_command('Hex',   function() vim.cmd('%!xxd | set ft=xxd') require('fidget').notify(':Hex -> conv to hex')  end, {  desc = ':Hex -> %!xxd turns text to hex representation, activates syntax highlighting'})
+-- vim.api.nvim_create_user_command('Hex',   function() vim.cmd('%!xxd | set ft=xxd') require('fidget').notify(':Hex -> conv to hex')  end, {  desc = ':Hex -> %!xxd turns text to hex representation, activates syntax highlighting'})
+vim.api.nvim_create_user_command('Hex',   function() vim.cmd('%!xxd | set ft=xxd') vim.notify(':Hex -> conv to hex')  end, {  desc = ':Hex -> %!xxd turns text to hex representation, activates syntax highlighting'})
 -- vim.api.nvim_create_user_command('Hex',   function() vim.cmd('%!xxd | set ft=xxd') require('notify')(':Hex -> conv to hex')  end, {  desc = ':Hex -> %!xxd turns text to hex representation, activates syntax highlighting'})
-vim.api.nvim_create_user_command('Unhex', function() vim.cmd('%!xxd -r') require('fidget').notify(':Unhex -> conv to text')         end, {  desc = ':Unhex -> %!xxd -r turns hex representation to text'})
+-- vim.api.nvim_create_user_command('Unhex', function() vim.cmd('%!xxd -r') require('fidget').notify(':Unhex -> conv to text')         end, {  desc = ':Unhex -> %!xxd -r turns hex representation to text'})
+vim.api.nvim_create_user_command('Unhex', function() vim.cmd('%!xxd -r') vim.notify(':Unhex -> conv to text')         end, {  desc = ':Unhex -> %!xxd -r turns hex representation to text'})
 -- vim.api.nvim_create_user_command('Unhex', function() vim.cmd('%!xxd -r') require('notify')(':Unhex -> conv to text')         end, {  desc = ':Unhex -> %!xxd -r turns hex representation to text'})
+
+vim.api.nvim_create_user_command('Spell',   function() vim.cmd(':set spell!')                    vim.notify(':Spell -> toggled spellchecking') end, {  desc = ':Spell -> toggled spellchecking'})
+vim.api.nvim_create_user_command('SpellEn', function() vim.cmd('setlocal spell spelllang=en')    vim.notify(':SpellEn -> activated spellchecking en') end, {  desc = ':SpellEn -> activated spellchecking en'})
+vim.api.nvim_create_user_command('SpellDe', function() vim.cmd('setlocal spell spelllang=de_de') vim.notify(':SpellDe -> activated spellchecking de') end, {  desc = ':SpellDe -> activated spellchecking de'})
 
 -- [[ custom filetype extensions ]]
 vim.filetype.add({
@@ -135,7 +141,11 @@ spec = {
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       {
-        'j-hui/fidget.nvim', opts = {  notification = { override_vim_notify = true } },
+        'j-hui/fidget.nvim', opts = {  notification = { override_vim_notify = false } },
+      },
+      -- replacement for messages coming through vim.notify(...)
+      {
+        'rcarriga/nvim-notify',
       },
 
       -- Additional lua configuration, makes nvim stuff amazing!
@@ -318,16 +328,18 @@ spec = {
         },
         popup = {
           position = {
-            row = '50%',  -- '10%'
+            row = '80%',  -- '10%'
             col = '50%',
           },
+          relative = "editor",
           size = {
-            width = '60%',
+            width = '40%',
           },
           border = {
             style = 'rounded',
           },
           win_options = {
+            winblend = 0,
             -- winhighlight = 'Normal:Normal,FloatBorder:FloatBorder',  -- highlight border
             winhighlight = 'Normal:Normal,FloatBorder:Normal',  -- dont highlight border
           },
@@ -827,8 +839,17 @@ spec = {
 })
 -- [[ end, stop lazy | stop plugin config ]]
 
+-- [[ remove user commands ]]
+
+-- fugitive user commands
+vim.api.nvim_del_user_command( 'Git' )
+vim.api.nvim_del_user_command( 'G' )
+
 -- [[ custom terminal implementation ]]
 require( 'term' )
+
+-- [[ custom notifications ]] 
+vim.notify = require("notify")
 
 
 -- [[ custom highlights ]] 
@@ -868,7 +889,7 @@ vim.api.nvim_create_autocmd({'BufEnter'}, {
 -- vim.api.nvim_create_autocmd({'ColorScheme'}, {
   callback = function()
     Set_tabs_as_spaces()
-    require("fidget").notify( "BufEnter -> Set_tabs_as_spaces()" )
+    -- require("fidget").notify( "BufEnter -> Set_tabs_as_spaces()" )
     -- require("notify")( "BufEnter -> Set_tabs_as_spaces()" )
   end,
   -- group = highlight_group,
@@ -908,7 +929,8 @@ vim.api.nvim_create_autocmd('ModeChanged', {
 vim.api.nvim_create_autocmd({'VimEnter','BufEnter'}, {
   callback = function()
     vim.cmd( "set syntax=C" )
-    require("fidget").notify("set syntax to c")
+    -- require("fidget").notify("set syntax to c")
+    vim.notify("set syntax to c")
     -- require("notify")("set syntax to c")
   end,
   group = highlight_group,
@@ -1021,7 +1043,8 @@ require('render-markdown').setup({
     --  󰉳 󰉴 󰛼 
     --       󰋼 󰽁 󰋽 󰙎 󱁯
 
-    signs = { '󰫎 ' },
+    -- signs = { '󰫎 ' },
+    signs = false,
 
     width = 'block',
     left_pad = 2,
@@ -1060,7 +1083,8 @@ require('render-markdown').setup({
     -- tag = {},
   },
 })
-vim.api.nvim_create_user_command('MDtoggle',  function() require('render-markdown').toggle() require('fidget').notify(':MDtoggle -> toggled render-markdown') end, {  desc = ':MDtoggle -> toggled render-markdown'})
+-- vim.api.nvim_create_user_command('MDtoggle',  function() require('render-markdown').toggle() require('fidget').notify(':MDtoggle -> toggled render-markdown') end, {  desc = ':MDtoggle -> toggled render-markdown'})
+vim.api.nvim_create_user_command('MDtoggle',  function() require('render-markdown').toggle() vim.notify(':MDtoggle -> toggled render-markdown') end, {  desc = ':MDtoggle -> toggled render-markdown'})
 
 -- -- [[ configure fidget | output print() to fidget notify ]]
 -- @NOTE: screws some stuff up, would need to output to both print and fidget
@@ -1162,6 +1186,34 @@ require('telescope').setup {
     -- selection_caret = "❯ ",
   },
 }
+-- configu_re telescope previewer
+vim.api.nvim_create_autocmd("User", {
+  pattern = "TelescopePreviewerLoaded",
+  callback = function(args)
+    -- for k, v in pairs(args) do
+    --   vim.notify( "args -> "..tostring(k)..": "..tostring(v) )
+    -- end
+    -- vim.notify( 'filetype: '..args.filetype )
+    local bufname = vim.api.nvim_buf_get_name( args.buf )
+    vim.notify( "bufname: "..tostring(bufname) )
+    vim.wo.number = true
+    vim.wo.wrap   = true
+    if bufname:match("*.png") or bufname:match("*.PNG") then
+      vim.notify( 'png' )
+      vim.cmd( 'read !viu '..bufname )
+    end
+    -- if args.filetype ~= "help" then
+    --   vim.wo.number = true
+    --   vim.wo.wrap   = true
+    -- elseif args.bufname:match("*.png") or args.bufname:match("*.PNG") then
+    --   vim.notify( 'cock' )
+    --   vim.wo.wrap = false
+    --   -- local buf = vim.api.nvim_get_current_buf()
+    --   -- vim.api.nvim_buf_set_lines( buf, 0, 100000000, false,  )
+    --   vim.cmd( 'read !viu '..args.bufname )
+    -- end
+  end,
+})
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
@@ -1222,11 +1274,11 @@ end, { desc = '[/] Fuzzily search in current buffer' })
 vim.keymap.set('n', '<leader>ss', require('telescope.builtin').builtin,     { desc = '[S]earch [S]elect Telescope' })
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files,   { desc = 'Search [G]it [F]iles' })
 vim.keymap.set('n', '<leader>f',  require('telescope.builtin').find_files,  { desc = 'search [F]iles' })
-vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags,   { desc = '[S]earch [H]elp' })
+vim.keymap.set('n', '<leader>h', require('telescope.builtin').help_tags,    { desc = 'search [H]elp' })
 -- vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 -- vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep,   { desc = '[S]earch by [G]rep' })
 -- vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>',                   { desc = '[S]earch by [G]rep on Git Root' })
-vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+-- vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>q',  require('telescope.builtin').diagnostics, { desc = 'search diagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume,      { desc = '[S]earch [R]esume' })
 
@@ -1380,17 +1432,6 @@ require('which-key').add{
   { "<leader>w", group = "[W]orkspace" },
   { "<leader>w_", hidden = true },
 }
--- old which-key bindings
--- {
---   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
---   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
---   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
---   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
---   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
---   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
---   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
---   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
--- }
 
 -- register which-key VISUAL mode
 -- required for visual <leader>hs (hunk stage) to work
@@ -1399,16 +1440,10 @@ require('which-key').add({
   { "<leader>", group = "VISUAL <leader>", mode = "v" },
   { "<leader>h", desc = "Git [H]unk", mode = "v" }, { mode = 'v' } })
 
--- old which-key bindings
--- {
---   ['<leader>'] = { name = 'VISUAL <leader>' },
---   ['<leader>h'] = { 'Git [H]unk' },
--- }, { mode = 'v' })
 
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
 require('mason').setup()
--- require('mason-lspconfig').setup()
 require("mason-lspconfig").setup {
     ensure_installed = { "clangd", "ols", "lua_ls" },
 }
@@ -1480,6 +1515,10 @@ vim.diagnostic.config({
   underline = true,
   -- update_in_insert = false,
   -- severity_sort = false,
+  float = {
+    source = true,
+    border = "rounded",
+  }
 })
 -- lsp error, warning, info, etc, icons
 local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = " " }
@@ -1488,7 +1527,7 @@ for type, icon in pairs(signs) do
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
 
--- [[ configure dap ]] 
+-- [[ configure dap / debugger ]] 
 
 require("mason-nvim-dap").setup({ ensure_installed = { "cppdbg" } })
 -- require("dapui").setup()
@@ -1517,7 +1556,8 @@ end
 dap.listeners.before.event_exited.dapui_config = function(session, body)
   -- -- print('Session terminated', vim.inspect(session), vim.inspect(body))
   -- -- require('fidget').notify('Session terminated: '..vim.inspect(session)..", "..vim.inspect(body))
-  require('fidget').notify("exit code: "..body.exitCode)
+  -- require('fidget').notify("exit code: "..body.exitCode)
+  vim.notify("exit code: "..body.exitCode)
   -- require('notify')("exit code: "..body.exitCode)
   _Dap_rtn_code = body.exitCode
   if body.exitCode == 0 then
@@ -1558,7 +1598,8 @@ dap.configurations.c = {
         coroutine.resume( coro )
         -- vim.cmd("ToggleTerm<CR>build<CR>")
         -- vim.api.nvim_command("!build")
-        require('fidget').notify("debugging: "..vim.fn.getcwd()..'\\'..txt)
+        -- require('fidget').notify("debugging: "..vim.fn.getcwd()..'\\'..txt)
+        vim.notify("debugging: "..vim.fn.getcwd()..'\\'..txt)
         -- require('notify')("debugging: "..vim.fn.getcwd()..'\\'..txt)
         return vim.fn.getcwd()..'\\'..txt
       else
@@ -1585,22 +1626,20 @@ dap.configurations.cpp = dap.configurations.c
 dap.configurations.odin = dap.configurations.c -- @TODO: get this working
 
 
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
-
 -- [[ configure gui nvim qt / neovide / etc. ]]
-if vim.fn.has('gui_running') == 1 then
-  require('fidget').notify( "vim.fn.has('gui_running'):"..vim.fn.has('gui_running') )
-  -- require('notify')( "vim.fn.has('gui_running'):"..vim.fn.has('gui_running') )
-  --require('session-lens').search_sWession()
-  -- vim.api.nvim_create_autocmd('UIEnter', {
-end
+
+-- if vim.fn.has('gui_running') == 1 then
+--   require('fidget').notify( "vim.fn.has('gui_running'):"..vim.fn.has('gui_running') )
+--   -- require('notify')( "vim.fn.has('gui_running'):"..vim.fn.has('gui_running') )
+--   --require('session-lens').search_sWession()
+--   -- vim.api.nvim_create_autocmd('UIEnter', {
+-- end
 
 vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
     -- vim.cmd("<cmd>SessionSearch<CR>")
     vim.cmd("SessionSearch")
-    require('fidget').notify( "called session search")
+    -- require('fidget').notify( "called session search")
     -- require('notify')( "called session search")
   end,
   -- pattern = '*',
