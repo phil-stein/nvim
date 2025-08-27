@@ -419,7 +419,7 @@ spec = {
                 -- require('hover.providers.gh_user')
                 -- require('hover.providers.jira')
                 -- require('hover.providers.man')
-                -- require('hover.providers.dictionary')
+                require('hover.providers.dictionary')
                 -- require('hover.providers.doc')
             end,
             preview_opts = {
@@ -754,7 +754,8 @@ spec = {
         -- lualine_b = {},
         lualine_b = { 'diff', 'diagnostics', 'vim.fn.expand("%:.")' },
         lualine_c = {},
-        lualine_x = { 'filetype', 'os.date("%I:%M", os.time())', 'location', 'vim.api.nvim_buf_line_count(0)' },
+        -- lualine_x = { 'filetype', 'os.date("%H:%M", os.time())', 'location', 'vim.api.nvim_buf_line_count(0)' },
+        lualine_x = { 'filetype', 'os.date("%H:%M")', 'location', 'vim.api.nvim_buf_line_count(0)' },
         lualine_y = {},
         lualine_z = {}
       },
