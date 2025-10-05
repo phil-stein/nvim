@@ -125,37 +125,40 @@ spec = {
   -- NOTE: First, some plugins that don't require any configuration
 
   -- Git related plugins
-  'tpope/vim-fugitive',
-  'tpope/vim-rhubarb',
+    { 'tpope/vim-fugitive', commit = "61b51c0" },
+    { 'tpope/vim-rhubarb',  commit = "5496d7c" },
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
+    commit = "f47cd68",
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
-      { 'williamboman/mason.nvim', config = true },
-      'williamboman/mason-lspconfig.nvim',
+      { 'williamboman/mason.nvim', commit = "8024d64", config = true },
+        { 'williamboman/mason-lspconfig.nvim', commit = "bb3a17e" },
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       {
-        'j-hui/fidget.nvim', opts = {  notification = { override_vim_notify = false } },
+        'j-hui/fidget.nvim', commit = "4ec7bed", opts = {  notification = { override_vim_notify = false } },
       },
       -- replacement for messages coming through vim.notify(...)
       {
         'rcarriga/nvim-notify',
+        commit = "397c7c1",
       },
 
       -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
+        { 'folke/neodev.nvim', commit = "46aa467" },
     },
   },
 
   {
     -- devicons
     'nvim-tree/nvim-web-devicons',
+    commit = "0422a19",
     config = function()
       require('nvim-web-devicons').setup()
     end
@@ -169,21 +172,23 @@ spec = {
   -- [[ Configure nvim-cmp ]]
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
+    commit = "b5311ab",
     event = 'InsertEnter',
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
       {
         'L3MON4D3/LuaSnip',
+        commit = "831a130",
         build = (function() end)(),
         dependencies = { },
       },
-      'saadparwaiz1/cmp_luasnip',
+        { 'saadparwaiz1/cmp_luasnip', commit = "98d9cb5" },
 
       -- Adds other completion capabilities.
       --  nvim-cmp does not ship with all sources by default. They are split
       --  into multiple repos for maintenance purposes.
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-path',
+        { 'hrsh7th/cmp-nvim-lsp', commit = "a8912b8" },
+        { 'hrsh7th/cmp-path',     commit = "e52e640" },
     },
     config = function()
       -- See `:help cmp`
@@ -279,8 +284,9 @@ spec = {
   -- },
   {
     'rmagatti/auto-session',
-    lazy = false,
-    keys = {
+    commit = "ee0320d7",
+    lazy   = false,
+    keys   = {
       -- Will use Telescope if installed or a vim.ui.select picker otherwise
       { '<leader>S', '<cmd>SessionSearch<CR>', desc = 'Session search' },
     },
@@ -313,6 +319,7 @@ spec = {
   {
     -- floating command line
     'VonHeikemen/fine-cmdline.nvim',
+    commit = "7db181d",
     dependencies = { 'MunifTanjim/nui.nvim' },
     -- open with :
     vim.api.nvim_set_keymap('n', ':', '<cmd>FineCmdline<CR>', {noremap = true}),
@@ -362,6 +369,7 @@ spec = {
 
   { -- bufferline / tabline
     'akinsho/bufferline.nvim',
+    commit = "655133c",
     after = "catppuccin",
     config = function()
       require("bufferline").setup {
@@ -386,6 +394,7 @@ spec = {
   {
     -- telescope tabs | tab
   	'LukasPietzschmann/telescope-tabs',
+    commit = "9ca0800",
   	config = function()
   		require('telescope').load_extension 'telescope-tabs'
   		require('telescope-tabs').setup {
@@ -399,6 +408,7 @@ spec = {
 
   { -- hover / K documentation popup
     "lewis6991/hover.nvim",
+    commit = "fdc5b4f",
     config = function()
         -- require('hover').register() {
         --   priority = 150,
@@ -454,6 +464,7 @@ spec = {
   {
     -- vimwiki
     "vimwiki/vimwiki",
+    commit = "7279261",
     init = function()
       vim.g.vimwiki_list = {
           {
@@ -476,12 +487,13 @@ spec = {
   -- { -- [[ dapui ]] -> show stacktraces, watches, etc, in ui windows
   --   "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
     "mfussenegger/nvim-dap",
+    commit = "5dd4d50",
     dependencies = {
-      'williamboman/mason.nvim',
-      'jay-babu/mason-nvim-dap.nvim',
-      "rcarriga/nvim-dap-ui",
-      "nvim-neotest/nvim-nio",
-      "theHamsta/nvim-dap-virtual-text",
+        { 'williamboman/mason.nvim',         commit = "5dd4d50" },
+        { 'jay-babu/mason-nvim-dap.nvim',    commit = "5fcd0df" },
+        { "rcarriga/nvim-dap-ui",            commit = "cf91d5e" },
+        { "nvim-neotest/nvim-nio",           commit = "21f5324" },
+        { "theHamsta/nvim-dap-virtual-text", commit = "fbdb48c" },
     },
     config = function()
       require('dapui').setup()
@@ -591,12 +603,13 @@ spec = {
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {},
-    dependencies = { 'echasnovski/mini.icons' },
+  { 'folke/which-key.nvim', commit = "370ec46", opts = {},
+    dependencies = { 'echasnovski/mini.icons', commit = "94848da" },
   },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
+    commit = "93f882f",
     opts = {
       -- See `:help gitsigns.txt`
       signs = {
@@ -611,6 +624,7 @@ spec = {
 
   {
     "catppuccin/nvim",
+    commit = "fa42eb5",
     name = "catppuccin",
     priority = 1000,
     config = function()
@@ -702,6 +716,7 @@ spec = {
   -- },
   {
     'mawkler/modicator.nvim',
+    commit = "45b6456",
     dependencies = "catppuccin/nvim", -- Add your colorscheme plugin here
     init = function()
       -- These are required for Modicator to work
@@ -723,6 +738,7 @@ spec = {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'rmagatti/auto-session' },
     -- See `:help lualine.txt`
+    commit = "a94fc68",
     after = "catppuccin",
     opts = {
       options = {
@@ -743,7 +759,7 @@ spec = {
         -- lualine_c = {'vim.fn.expand("%:.")', 'require("auto-session.lib").current_session_name()', 'require("nvim_lsp").status()' }, 
 
         lualine_x = { 'filetype' },
-        lualine_y = { 'os.date("%I:%M", os.time())' },
+        lualine_y = { 'os.date("%H:%M", os.time())' },
         lualine_z = { 'progress', 'location', 'vim.api.nvim_buf_line_count(0)' }
       },
       inactive_sections = {
@@ -767,25 +783,29 @@ spec = {
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help ibl`
+    commit = "005b560",
     main = 'ibl',
     opts = {},
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim', commit = "e30b7f2", opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
+    commit = "a0bbec2",
     dependencies = {
       'BurntSushi/ripgrep',
-      'nvim-lua/plenary.nvim',
+      commit = "3b7fd44",
+        { 'nvim-lua/plenary.nvim', commit = "857c5ac" },
       -- Fuzzy Finder Algorithm which requires local dependencies to be built.
       -- Only load if `make` is available. Make sure you have the system
       -- requirements installed.
       {
         'nvim-telescope/telescope-fzf-native.nvim',
+        commit = "1f08ed6",
         -- NOTE: If you are having trouble with this installation,
         --       refer to the README for telescope-fzf-native for more instructions.
         build = 'make',
@@ -799,17 +819,19 @@ spec = {
     -- [[ neotree | file browser ]]
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
+    commit = "cea666e",
     dependencies =
     {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      "MunifTanjim/nui.nvim",
+      { 'nvim-lua/plenary.nvim',       commit = "857c5ac" },
+      { "nvim-tree/nvim-web-devicons", commit = "0422a19" }, -- not strictly required, but recommended
+      { "MunifTanjim/nui.nvim",        commit = "de74099" },
     },
     -- vim.api.nvim_set_keymap("n","<C-d>", ":tabnew | Neotree position=current<CR>", { noremap = true }),
   },
 
   {
     'MeanderingProgrammer/render-markdown.nvim',
+    commit = "b540997",
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
     -- dont ave above, have the two below
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
@@ -822,8 +844,9 @@ spec = {
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    commit = "42fc28b",
     dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
+        { 'nvim-treesitter/nvim-treesitter-textobjects', commit = "89ebe73" },
     },
     build = ':TSUpdate',
   },
