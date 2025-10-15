@@ -252,7 +252,11 @@ vim.keymap.set('n', '<C-b>',
       vim.notify( 'sourced current file' )
     else
       vim.notify( 'Ctrl-B -> build' )
-      vim.cmd( 'Term build\r')
+      if (vim.fn.has('macunix')) then
+        vim.cmd( 'Term bash build.sh\r')
+      else
+        vim.cmd( 'Term build\r')
+      end
     end
   end,
   { silent = true , desc = "call build batch/bash file or open .md files in typora"})
