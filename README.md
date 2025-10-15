@@ -4,7 +4,7 @@ config based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) <br
 
 font: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/JetBrainsMono <br>
 
-<img src="https://github.com/phil-stein/nvim/blob/main/screenshot_01.PNG" alt="screenshot" width="800"> <br>
+<img src="https://github.com/phil-stein/nvim/blob/main/screenshot_02.PNG" alt="screenshot" width="800"> <br>
 
 ## setup
 ```
