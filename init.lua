@@ -70,6 +70,15 @@ vim.opt.rtp:prepend(lazypath)
   --        see :h word-motions
   vim.keymap.set('n', '<C-LEFT>',  'b' )
   vim.keymap.set('n', '<C-RIGHT>', 'e' )
+  vim.keymap.set('i', '<C-LEFT>',  function () vim.cmd.normal( 'b' ) end )
+  vim.keymap.set('i', '<C-RIGHT>', function () vim.cmd.normal( 'e' ) end )
+
+  -- @NOTE: PageUp / PageDown to go to 
+  --        end of line or start of line
+  vim.keymap.set('n', '<PageUp>', '^' )
+  vim.keymap.set('n', '<PageDown>', '$' )
+  vim.keymap.set('i', '<PageUp>',   function () vim.cmd.normal('^') end )
+  vim.keymap.set('i', '<PageDown>', function () vim.cmd.normal('$') end )
 
   -- @NOTE: terminal keymaps / commands
   vim.api.nvim_set_keymap( 't', '<ESC>', '<C-\\><C-n>', {noremap = true, desc = "return to normal mode from terminal insert mode"} )

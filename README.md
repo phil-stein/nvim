@@ -8,11 +8,11 @@ font: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/JetBrain
 
 ## setup
 ```
-make backup of nvim folder first, if already exists
+make backup of 'nvim' folder first, if already exists
 windows: 
-  >cd %appdata%\..\local\nvim
+  >cd %appdata%\..\local
 linux:
-  cd into nvim directory
+  cd ~/.config
   
 >git clone https://github.com/phil-stein/nvim 
 
