@@ -70,6 +70,8 @@ vim.opt.rtp:prepend(lazypath)
   --        see :h word-motions
   vim.keymap.set('n', '<C-LEFT>',  'b' )
   vim.keymap.set('n', '<C-RIGHT>', 'e' )
+  vim.keymap.set('v', '<C-LEFT>',  'b' )
+  vim.keymap.set('v', '<C-RIGHT>', 'e' )
   vim.keymap.set('i', '<C-LEFT>',  function () vim.cmd.normal( 'b' ) end )
   vim.keymap.set('i', '<C-RIGHT>', function () vim.cmd.normal( 'e' ) end )
 
