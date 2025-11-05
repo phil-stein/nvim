@@ -1498,8 +1498,8 @@ require("mason-lspconfig").setup {
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
-  -- ols    = {},
+  clangd = {},
+  ols    = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
 
   lua_ls = {
@@ -1531,17 +1531,17 @@ mason_lspconfig.setup {
 }
 
 -- @NOTE: i think this was deprecated, was null, idk
--- mason_lspconfig.setup_handlers {
---   function(server_name)
---     require('lspconfig')[server_name].setup {
---       capabilities = capabilities,
---       on_attach = on_attach,
---       settings = servers[server_name],
---       filetypes = (servers[server_name] or {}).filetypes,
---       icons_enabled = true,
---     }
---   end,
--- }
+mason_lspconfig.setup_handlers {
+  function(server_name)
+    require('lspconfig')[server_name].setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = servers[server_name],
+      filetypes = (servers[server_name] or {}).filetypes,
+      icons_enabled = true,
+    }
+  end,
+}
 
 -- lsp diagnostic display settings
 vim.diagnostic.config({
