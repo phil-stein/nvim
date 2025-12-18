@@ -257,7 +257,7 @@ vim.keymap.set('n', '<C-b>',
       -- else
       --   vim.cmd( 'Term build\r')
       -- end
-      if vim.fn.has('win32') then
+      if vim.fn.has('win32') == 1 then
         vim.cmd( 'Term build\r')
       else
         vim.cmd( 'Term bash build.sh\r')
