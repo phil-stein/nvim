@@ -252,10 +252,15 @@ vim.keymap.set('n', '<C-b>',
       vim.notify( 'sourced current file' )
     else
       vim.notify( 'Ctrl-B -> build' )
-      if (vim.fn.has('macunix') == true or vim.fn.has('macunix') == 1) then
-        vim.cmd( 'Term bash build.sh\r')
-      else
+      -- if (vim.fn.has('macunix') == true or vim.fn.has('macunix') == 1) then
+      --   vim.cmd( 'Term bash build.sh\r')
+      -- else
+      --   vim.cmd( 'Term build\r')
+      -- end
+      if vim.fn.has('win32') then
         vim.cmd( 'Term build\r')
+      else
+        vim.cmd( 'Term bash build.sh\r')
       end
     end
   end,
