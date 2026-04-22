@@ -1203,6 +1203,7 @@ require('telescope').setup {
     file_ignore_patterns = {
       ".git\\", ".vs\\", ".cache\\", ".git/", ".vs/", ".cache/",
       "_bin\\", "_bin/", "bin\\", "bin/",
+      "external\\", "external/", "vendeur\\", "vendeur/",
       -- "%.o",
       "%.zip",
       "%.tex","%.mesh",
