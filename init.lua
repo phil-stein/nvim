@@ -89,7 +89,7 @@ vim.opt.rtp:prepend(lazypath)
 -- vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('fidget').notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
 vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') vim.notify(':W -> saved all') end,        {  desc = ':W -> :wall'})
 -- vim.api.nvim_create_user_command('W',  function() vim.cmd('wall') require('notify')(':W -> saved all') end,        {  desc = ':W -> :wall'})
-vim.api.nvim_create_user_command('WQ', function() vim.cmd('wall | qall') vim.notify(':WQ -> saved all then quit') end, {  desc = ':WQ -> :wall | :qall'})
+vim.api.nvim_create_user_command('WQ', function() vim.cmd('SessionSave | wall | qall') vim.notify(':WQ -> saved all then quit') end, {  desc = ':WQ -> :wall | :qall'})
 
 vim.api.nvim_create_user_command('Theme',
   function()
@@ -1482,6 +1482,7 @@ require('which-key').add({
 require('mason').setup()
 require("mason-lspconfig").setup {
     ensure_installed = { "clangd", "ols", "lua_ls" },
+    -- automatic_enable = { "clangd", "ols", "lua_ls" }
 }
 -- @NOTE: i think this was deprecated, was null, idk
 -- require('mason-lspconfig').setup_handlers {
@@ -1529,6 +1530,7 @@ local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
+  -- automativ_enable = vim.tbl_keys(servers),
 }
 
 -- -- @NOTE: i think this was deprecated, was null, idk
@@ -1732,4 +1734,6 @@ if vim.g.neovide == true then
   end)
 end
 
+-- mooh syntax highlighting
+vim.cmd( "au BufRead,BufNewFile *.mooh set filetype=mooh" )
 
